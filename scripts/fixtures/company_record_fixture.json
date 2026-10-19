@@ -1,0 +1,554 @@
+{
+"company": {
+"cik": 123456,
+"ticker": "XMPL",
+"name": "Example Semi (synthetic fixture)",
+"fy_end_month": 12,
+"as_of": "2026-10-16"
+},
+"submissions": {
+"cik": "123456",
+"name": "EXAMPLE SEMI",
+"filings": {
+"recent": {
+"accessionNumber": [
+"0000123456-25-000040",
+"0000123456-26-000005",
+"0000123456-26-000031",
+"0000123456-26-000058",
+"0000123456-26-000012"
+],
+"filingDate": [
+"2025-10-23",
+"2026-01-22",
+"2026-04-23",
+"2026-07-23",
+"2026-02-20"
+],
+"acceptanceDateTime": [
+"2025-10-23T16:05:11.000Z",
+"2026-01-22T16:04:02.000Z",
+"2026-04-23T16:06:40.000Z",
+"2026-07-23T07:30:15.000Z",
+"2026-02-20T17:10:00.000Z"
+],
+"form": [
+"8-K",
+"8-K",
+"8-K",
+"8-K",
+"10-K"
+],
+"primaryDocument": [
+"form8k.htm",
+"form8k.htm",
+"form8k.htm",
+"form8k.htm",
+"form10k.htm"
+],
+"items": [
+"2.02,9.01",
+"2.02,9.01",
+"2.02,9.01",
+"2.02,9.01",
+""
+]
+}
+}
+},
+"companyfacts": {
+"cik": 123456,
+"facts": {
+"us-gaap": {
+"Revenues": {
+"units": {
+"USD": [
+{
+"start": "2025-01-01",
+"end": "2025-03-31",
+"val": 1800000000.0,
+"fy": 2025,
+"fp": "Q1",
+"form": "10-Q",
+"filed": "2025-05-06",
+"accn": "0000123456-25-000020"
+},
+{
+"start": "2025-04-01",
+"end": "2025-06-30",
+"val": 1850000000.0,
+"fy": 2025,
+"fp": "Q2",
+"form": "10-Q",
+"filed": "2025-08-05",
+"accn": "0000123456-25-000030"
+},
+{
+"start": "2025-07-01",
+"end": "2025-09-30",
+"val": 1900000000.0,
+"fy": 2025,
+"fp": "Q3",
+"form": "10-Q",
+"filed": "2025-11-05",
+"accn": "0000123456-25-000045"
+},
+{
+"start": "2025-01-01",
+"end": "2025-12-31",
+"val": 7630000000.0,
+"fy": 2025,
+"fp": "FY",
+"form": "10-K",
+"filed": "2026-02-20",
+"accn": "0000123456-26-000012"
+},
+{
+"start": "2026-01-01",
+"end": "2026-03-31",
+"val": 2120000000.0,
+"fy": 2026,
+"fp": "Q1",
+"form": "10-Q",
+"filed": "2026-05-06",
+"accn": "0000123456-26-000035"
+},
+{
+"start": "2026-04-01",
+"end": "2026-06-30",
+"val": 2180000000.0,
+"fy": 2026,
+"fp": "Q2",
+"form": "10-Q",
+"filed": "2026-08-05",
+"accn": "0000123456-26-000062"
+}
+]
+}
+},
+"GrossProfit": {
+"units": {
+"USD": [
+{
+"start": "2025-01-01",
+"end": "2025-03-31",
+"val": 986400000.0,
+"fy": 2025,
+"fp": "Q1",
+"form": "10-Q",
+"filed": "2025-05-06",
+"accn": "0000123456-25-000020"
+},
+{
+"start": "2025-04-01",
+"end": "2025-06-30",
+"val": 1017500000.0,
+"fy": 2025,
+"fp": "Q2",
+"form": "10-Q",
+"filed": "2025-08-05",
+"accn": "0000123456-25-000030"
+},
+{
+"start": "2025-07-01",
+"end": "2025-09-30",
+"val": 1048800000.0,
+"fy": 2025,
+"fp": "Q3",
+"form": "10-Q",
+"filed": "2025-11-05",
+"accn": "0000123456-25-000045"
+},
+{
+"start": "2025-01-01",
+"end": "2025-12-31",
+"val": 4242280000.0,
+"fy": 2025,
+"fp": "FY",
+"form": "10-K",
+"filed": "2026-02-20",
+"accn": "0000123456-26-000012"
+},
+{
+"start": "2026-01-01",
+"end": "2026-03-31",
+"val": 1197800000.0,
+"fy": 2026,
+"fp": "Q1",
+"form": "10-Q",
+"filed": "2026-05-06",
+"accn": "0000123456-26-000035"
+},
+{
+"start": "2026-04-01",
+"end": "2026-06-30",
+"val": 1242600000.0,
+"fy": 2026,
+"fp": "Q2",
+"form": "10-Q",
+"filed": "2026-08-05",
+"accn": "0000123456-26-000062"
+}
+]
+}
+},
+"EarningsPerShareDiluted": {
+"units": {
+"USD/shares": [
+{
+"start": "2025-01-01",
+"end": "2025-03-31",
+"val": 1.02,
+"fy": 2025,
+"fp": "Q1",
+"form": "10-Q",
+"filed": "2025-05-06",
+"accn": "0000123456-25-000020"
+},
+{
+"start": "2025-04-01",
+"end": "2025-06-30",
+"val": 1.06,
+"fy": 2025,
+"fp": "Q2",
+"form": "10-Q",
+"filed": "2025-08-05",
+"accn": "0000123456-25-000030"
+},
+{
+"start": "2025-07-01",
+"end": "2025-09-30",
+"val": 1.1,
+"fy": 2025,
+"fp": "Q3",
+"form": "10-Q",
+"filed": "2025-11-05",
+"accn": "0000123456-25-000045"
+},
+{
+"start": "2025-01-01",
+"end": "2025-12-31",
+"val": 4.4,
+"fy": 2025,
+"fp": "FY",
+"form": "10-K",
+"filed": "2026-02-20",
+"accn": "0000123456-26-000012"
+},
+{
+"start": "2026-01-01",
+"end": "2026-03-31",
+"val": 1.35,
+"fy": 2026,
+"fp": "Q1",
+"form": "10-Q",
+"filed": "2026-05-06",
+"accn": "0000123456-26-000035"
+},
+{
+"start": "2026-04-01",
+"end": "2026-06-30",
+"val": 1.28,
+"fy": 2026,
+"fp": "Q2",
+"form": "10-Q",
+"filed": "2026-08-05",
+"accn": "0000123456-26-000062"
+}
+]
+}
+},
+"PaymentsToAcquirePropertyPlantAndEquipment": {
+"units": {
+"USD": [
+{
+"start": "2025-01-01",
+"end": "2025-12-31",
+"val": 1300000000.0,
+"fy": 2025,
+"fp": "FY",
+"form": "10-K",
+"filed": "2026-02-20",
+"accn": "0000123456-26-000012"
+},
+{
+"start": "2026-01-01",
+"end": "2026-03-31",
+"val": 350000000.0,
+"fy": 2026,
+"fp": "Q1",
+"form": "10-Q",
+"filed": "2026-05-06",
+"accn": "0000123456-26-000035"
+},
+{
+"start": "2026-01-01",
+"end": "2026-06-30",
+"val": 760000000.0,
+"fy": 2026,
+"fp": "Q2",
+"form": "10-Q",
+"filed": "2026-08-05",
+"accn": "0000123456-26-000062"
+}
+]
+}
+}
+}
+}
+},
+"documents": {
+"0000123456-25-000040/ex99-1.htm": "<html><body><p>Example Semi reports third quarter 2025 results. Revenue for the third quarter of 2025 was $1.90 billion, up 12% year over year. Gross margin was 55.2%. Diluted earnings per share were $1.10. Outlook: for the fourth quarter of 2025, the company expects revenue between $1.95 billion and $2.05 billion, gross margin between 55% and 57%, and diluted EPS between $1.15 and $1.25.</p></body></html>",
+"0000123456-26-000005/ex99-1.htm": "<html><body><p>Example Semi reports fourth quarter and full year 2025 results. Revenue for the fourth quarter of 2025 was $2.08 billion. Gross margin was 56.1%. Diluted earnings per share were $1.22. For the first quarter of 2026 the company expects revenue between $2.00 billion and $2.10 billion, gross margin between 55% and 57%, and diluted EPS between $1.20 and $1.30. The company expects capital expenditures for fiscal 2026 of approximately $1.5 billion.</p></body></html>",
+"0000123456-26-000031/ex99-1.htm": "<html><body><p>Example Semi reports first quarter 2026 results. Revenue for the first quarter of 2026 was $2.12 billion. Gross margin was 56.5%. Diluted earnings per share were $1.35. Outlook: for the second quarter of 2026, the company anticipates revenue in the range of $2.20 billion to $2.30 billion and gross margin between 56% and 58%.</p></body></html>",
+"0000123456-26-000058/ex99-1.htm": "<html><body><p>Example Semi reports second quarter 2026 results. Revenue for the second quarter of 2026 was $2.18 billion. Gross margin was 57.0%. Diluted earnings per share were $1.28. For the third quarter of 2026 the company expects revenue between $2.40 billion and $2.50 billion and gross margin between 57% and 59%. Capital expenditures for fiscal 2026 are now expected to be approximately $1.6 billion.</p></body></html>",
+"0000123456-26-000012/form10k.htm": "<html><body><p>Annual report. Item 1. Business. Customers. Sales to Customer A accounted for approximately 24% of our net revenue in 2025 and 21% in 2024. Our ten largest customers accounted for 61% of net revenue in 2025. Note 15. Segment information. One customer represented 24% of total revenue for the year ended December 31, 2025. Item 1A. Risk factors. We depend on a small number of customers.</p></body></html>"
+},
+"price_runs": {
+"XMPL": [
+[
+"2025-10-21",
+[
+97.65,
+98.49,
+100.55,
+105.65,
+102.94,
+102.91,
+104.0,
+106.39,
+103.91,
+101.32,
+102.86,
+103.93,
+107.23,
+109.44,
+109.33,
+108.84,
+114.54,
+113.99,
+112.32,
+109.87,
+110.19,
+110.62,
+109.97,
+109.94,
+110.65
+]
+],
+[
+"2026-01-20",
+[
+119.63,
+122.26,
+122.77,
+122.06,
+123.77,
+120.26,
+119.85,
+116.31,
+116.32,
+114.51,
+115.0,
+122.59,
+122.47,
+124.53,
+121.24,
+120.54,
+122.13,
+121.91,
+122.81,
+123.06,
+120.59,
+121.95,
+119.97,
+124.46,
+123.2
+]
+],
+[
+"2026-04-21",
+[
+127.14,
+127.15,
+130.18,
+138.63,
+142.1,
+141.66,
+146.13,
+148.41,
+148.93,
+146.03,
+148.83,
+150.57,
+156.75,
+155.28,
+157.43,
+159.43,
+160.56,
+161.39,
+162.13,
+159.7,
+155.65,
+154.11,
+156.39,
+162.29,
+166.26
+]
+],
+[
+"2026-07-21",
+[
+143.55,
+146.19,
+138.37,
+138.86,
+141.4,
+147.53,
+146.17,
+143.49,
+150.38,
+151.15,
+154.67,
+157.89,
+153.25,
+162.42,
+169.47,
+170.05,
+173.08,
+173.45,
+169.45,
+168.8,
+170.21,
+174.79,
+177.71,
+177.8,
+183.65
+]
+]
+],
+"SPY": [
+[
+"2025-10-21",
+[
+497.21,
+500.61,
+505.31,
+504.39,
+497.41,
+494.06,
+495.24,
+497.58,
+503.99,
+500.19,
+500.45,
+503.3,
+502.92,
+493.63,
+497.06,
+506.51,
+510.83,
+507.34,
+505.92,
+507.07,
+517.42,
+520.23,
+520.97,
+527.72,
+527.64
+]
+],
+[
+"2026-01-20",
+[
+527.74,
+524.85,
+522.86,
+525.87,
+531.87,
+534.65,
+535.94,
+528.13,
+525.12,
+522.55,
+520.32,
+522.76,
+521.36,
+524.64,
+524.99,
+523.59,
+524.09,
+525.88,
+529.49,
+527.47,
+526.49,
+520.75,
+527.43,
+533.55,
+532.79
+]
+],
+[
+"2026-04-21",
+[
+527.72,
+521.85,
+522.65,
+523.62,
+533.9,
+535.08,
+531.34,
+519.65,
+526.24,
+527.13,
+519.5,
+520.34,
+512.81,
+528.87,
+534.2,
+536.95,
+536.1,
+525.78,
+525.18,
+517.83,
+520.61,
+510.59,
+506.42,
+511.98,
+519.55
+]
+],
+[
+"2026-07-21",
+[
+539.21,
+531.76,
+535.97,
+540.09,
+535.29,
+531.95,
+528.62,
+522.96,
+519.76,
+525.61,
+528.88,
+538.67,
+538.25,
+537.59,
+532.84,
+532.24,
+525.95,
+517.54,
+520.79,
+527.54,
+531.51,
+537.88,
+539.11,
+535.62,
+536.04
+]
+]
+]
+},
+"benchmark": "SPY"
+}
