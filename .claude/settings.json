@@ -1,0 +1,10 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(gh api -X PUT repos/dandan99soccer/*/pulls/*/merge*)",
+      "Bash(gh api --method PUT repos/dandan99soccer/*/pulls/*/merge*)",
+      "Bash(gh api repos/dandan99soccer/*/pulls/*/merge -X PUT*)",
+      "Bash(gh api repos/dandan99soccer/*/pulls/*/merge --method PUT*)"
+    ]
+  }
+}
