@@ -4,7 +4,7 @@ Read with `equities-b.md` (the reading order, the evidence checklist with clocks
 
 ## 1. Decision forms
 
-Buy, add, trim, sell or hold a name; size a position; swap A for B (an ADR against its ordinary line); when (now, or after a named event); the weight of a name in a book; an options overlay only where it clearly makes sense (owner rule). Each is decided by four quantities: the constraint-only call (3), the after-tax paired difference against hold (6), the loss-budget size (6) and the edge verdict (4). **Hold is always a strategy with full forecasts and comes first on every table**; a move must beat it by a printed hurdle: spread and commission, the net tax cost, and the owner's own trade-record haircut (equities-b section 3).
+Buy, add, trim, sell or hold a name; size a position; swap A for B (an ADR against its ordinary line); when (now, or after a named event); the weight of a name in a book; an options overlay only where the owner profile allows one and it clearly makes sense. Each is decided by four quantities: the constraint-only call (3), the after-tax paired difference against hold (6), the loss-budget size (6) and the edge verdict (4). **Hold is always a strategy with full forecasts and comes first on every table**; a move must beat it by a printed hurdle: spread and commission, the net tax cost, and the owner's own trade-record haircut (equities-b section 3).
 
 ## 2. Outcome variables and the scoring rule
 
