@@ -2,13 +2,18 @@
 Standard library only; the math is imported from forecast_tools.py in the same folder.
 
     python3 forecast_ledger.py                                   # smoke test
-    python3 forecast_ledger.py --init <dir>                      # create LEDGER.csv + CALIBRATION.md in the shared folder
+    python3 forecast_ledger.py --where                           # print the shared ledger folder this run would use
+    python3 forecast_ledger.py --init [<dir>]                    # create LEDGER.csv + CALIBRATION.md there (or in <dir>)
     python3 forecast_ledger.py --check FORECASTS.csv             # required fields, ranges, groups, quantiles, extremes
     python3 forecast_ledger.py --score FORECASTS.csv             # fill score / score_kind where outcome is present
-    python3 forecast_ledger.py --append FORECASTS.csv --to LEDGER.csv --run <id> --project <name>
-    python3 forecast_ledger.py --calibrate LEDGER.csv --out CALIBRATION.md
+    python3 forecast_ledger.py --append FORECASTS.csv --run <id> [--project <name>] [--to LEDGER.csv]
+    python3 forecast_ledger.py --calibrate [LEDGER.csv] --out CALIBRATION.md
+    python3 forecast_ledger.py --sheet-rows FORECASTS.csv --run <id>   # ledger rows as TSV, for a connected spreadsheet
 
-Columns and rules: references/forecast.md sections 2, 6, 8 and 9.
+The shared folder, when --to / --calibrate / --init give none, is the first of: $STRESS_TEST_LEDGER;
+./ledger when it exists (a project repository's committed folder, which outlives a cloud session);
+~/.claude/sessions/stress-test-forecasts (the laptop). Columns and rules: references/forecast.md
+sections 2, 6, 8 and 9.
 """
 from __future__ import annotations
 
@@ -130,6 +135,16 @@ def calibration_report(ledger: Sequence[dict], min_skill_n: int = 15, min_bin_n:
     res = [r for r in ledger if r.get("status") == "resolved" and r.get("kind") in ("event", "ranking")
            and _f(r.get("p")) is not None and _f(r.get("outcome")) is not None]
     lines = [f"# Calibration record — regenerated {date.today().isoformat()}", ""]
+    today = date.today().isoformat()
+    overdue = [r for r in ledger if r.get("status") == "open" and (r.get("resolve_date") or "9999") < today]
+    if overdue:
+        # the review-date task (references/forecast.md section 13) resolves these before any new row is written
+        lines += [f"**{len(overdue)} open row(s) past their resolve date** — resolve from each row's named source before writing new rows:", ""]
+        lines += [f"- {r.get('id')} ({r.get('decision')}, due {r.get('resolve_date')}): {r.get('question')} — source: {r.get('source')}"
+                  for r in overdue[:50]]
+        if len(overdue) > 50:
+            lines.append(f"- … and {len(overdue) - 50} more")
+        lines.append("")
     if not res:
         return "\n".join(lines + ["No resolved event forecasts yet. Skill and bin tests read n/a until fifteen resolutions "
                                   "from at least two independent questions, and eight in a bin.", ""]) + "\n"
@@ -169,6 +184,32 @@ def calibration_report(ledger: Sequence[dict], min_skill_n: int = 15, min_bin_n:
     return "\n".join(lines) + "\n"
 
 
+LAPTOP_LEDGER_DIR = os.path.join("~", ".claude", "sessions", "stress-test-forecasts")
+
+
+def resolve_ledger_dir(explicit: Optional[str] = None, env: Optional[Dict[str, str]] = None, cwd: Optional[str] = None) -> str:
+    """The shared ledger folder: the explicit path; else $STRESS_TEST_LEDGER; else ./ledger when it exists
+    (a repository's committed folder, which outlives a cloud session); else the laptop folder."""
+    if explicit:
+        return os.path.expanduser(explicit)
+    env = os.environ if env is None else env
+    if env.get("STRESS_TEST_LEDGER"):
+        return os.path.expanduser(env["STRESS_TEST_LEDGER"])
+    repo_ledger = os.path.join(cwd or os.getcwd(), "ledger")
+    if os.path.isdir(repo_ledger):
+        return os.path.abspath(repo_ledger)
+    return os.path.expanduser(LAPTOP_LEDGER_DIR)
+
+
+def sheet_rows(rows: List[Dict[str, str]], run: str, project: str) -> str:
+    """Ledger rows as tab-separated text, header first, for appending to a connected spreadsheet."""
+    out = ["\t".join(LEDGER_COLUMNS)]
+    for r in rows:
+        full = dict(r, run=run, project=project)
+        out.append("\t".join((full.get(c) or "").replace("\t", " ").replace("\n", " ") for c in LEDGER_COLUMNS))
+    return "\n".join(out) + "\n"
+
+
 def init_folder(folder: str) -> None:
     os.makedirs(folder, exist_ok=True)
     ledger = os.path.join(folder, "LEDGER.csv")
@@ -197,22 +238,38 @@ def _smoke() -> None:
         append_run([dict(r, id=r["id"] + "b", decision="demo2") for r in rows], led, "run-2", "demo")
         rep = calibration_report(read_csv(led))
         assert "Resolved event forecasts: 4" in rep and "Brier skill: n/a" in rep
+        stale = [dict(base, id="S1", kind="event", question="late", p="0.5", range_low="0.4", range_high="0.6", resolve_date="2000-01-01")]
+        assert "1 open row(s) past their resolve date" in calibration_report(stale) and "S1 (demo, due 2000-01-01)" in calibration_report(stale)
         init_folder(os.path.join(d, "shared"))
         assert os.path.exists(os.path.join(d, "shared", "CALIBRATION.md"))
-    print("forecast_ledger smoke test: ok (run check, scoring, append with dedupe, calibration report, init)")
+        # the shared folder resolves in order: explicit, environment, ./ledger in the working folder, the laptop folder
+        assert resolve_ledger_dir("/x/y", env={"STRESS_TEST_LEDGER": "/z"}, cwd=d) == "/x/y"
+        assert resolve_ledger_dir(None, env={"STRESS_TEST_LEDGER": "/z"}, cwd=d) == "/z"
+        assert resolve_ledger_dir(None, env={}, cwd=d) == os.path.expanduser(LAPTOP_LEDGER_DIR)
+        os.makedirs(os.path.join(d, "ledger"))
+        assert resolve_ledger_dir(None, env={}, cwd=d) == os.path.abspath(os.path.join(d, "ledger"))
+        tsv = sheet_rows(rows, "run-1", "demo").splitlines()
+        assert tsv[0].split("\t") == LEDGER_COLUMNS and len(tsv) == 4 and tsv[1].startswith("run-1\tdemo\tF1\t")
+    print("forecast_ledger smoke test: ok (run check, scoring, append with dedupe, calibration report, init, ledger folder, sheet rows)")
 
 
 def main(argv: Optional[Sequence[str]] = None) -> int:
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
-    for flag, meta in (("--init", "DIR"), ("--check", "FORECASTS.csv"), ("--score", "FORECASTS.csv"),
-                       ("--append", "FORECASTS.csv"), ("--to", "LEDGER.csv"), ("--calibrate", "LEDGER.csv"), ("--out", "CALIBRATION.md")):
+    for flag, meta in (("--check", "FORECASTS.csv"), ("--score", "FORECASTS.csv"), ("--append", "FORECASTS.csv"),
+                       ("--to", "LEDGER.csv"), ("--out", "CALIBRATION.md"), ("--sheet-rows", "FORECASTS.csv")):
         ap.add_argument(flag, metavar=meta)
+    ap.add_argument("--init", nargs="?", const="", metavar="DIR")
+    ap.add_argument("--calibrate", nargs="?", const="", metavar="LEDGER.csv")
+    ap.add_argument("--where", action="store_true", help="print the shared ledger folder this run would use")
     ap.add_argument("--run")
     ap.add_argument("--project", default="")
     a = ap.parse_args(argv)
-    if a.init:
-        init_folder(a.init)
-        print(f"initialised {a.init}")
+    if a.where:
+        print(resolve_ledger_dir())
+    elif a.init is not None:
+        folder = resolve_ledger_dir(a.init or None)
+        init_folder(folder)
+        print(f"initialised {folder}")
     elif a.check:
         probs = check_run(read_csv(a.check))
         print("\n".join(probs) if probs else "check: ok")
@@ -223,11 +280,19 @@ def main(argv: Optional[Sequence[str]] = None) -> int:
         write_csv(a.score, rows, COLUMNS)
         print(f"scored {n} rows")
     elif a.append:
-        if not (a.to and a.run):
-            ap.error("--append needs --to and --run")
-        print(f"appended {append_run(read_csv(a.append), a.to, a.run, a.project)} rows to {a.to}")
-    elif a.calibrate:
-        rep = calibration_report(read_csv(a.calibrate))
+        if not a.run:
+            ap.error("--append needs --run")
+        to = a.to or os.path.join(resolve_ledger_dir(), "LEDGER.csv")
+        if not os.path.exists(to):
+            init_folder(os.path.dirname(to) or ".")
+        print(f"appended {append_run(read_csv(a.append), to, a.run, a.project)} rows to {to}")
+    elif a.sheet_rows:
+        if not a.run:
+            ap.error("--sheet-rows needs --run")
+        print(sheet_rows(read_csv(a.sheet_rows), a.run, a.project), end="")
+    elif a.calibrate is not None:
+        ledger = a.calibrate or os.path.join(resolve_ledger_dir(), "LEDGER.csv")
+        rep = calibration_report(read_csv(ledger))
         if a.out:
             with open(a.out, "w", encoding="utf-8") as fh:
                 fh.write(rep)
