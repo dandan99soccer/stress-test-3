@@ -1,12 +1,12 @@
-"""Propagation engine for stress-test-3 (references/level-6-simulation.md): a transmission graph of what moves what, by how
+"""Propagation engine for the stress-test skill (references/level-6-simulation.md): a transmission graph of what moves what, by how
 much and with what lag; named shock scenarios propagated through it (cause and effect, first and second order); a Monte
 Carlo of the subject against its benchmark; the share of the subject's variance each driver carries; and the sensitivity of
 the decision statistic to every link's range, which names the research questions. Standard library only. Link sizes come
 from graph_fit.py (measured on a price panel) or are written by the lead with a mark and a source; nothing here invents one.
 The markdown report, the FORECASTS.csv rows and the command line are in propagate_report.py, which this file hands off to.
 
-    py -3 propagate.py                                     # engine smoke test
-    py -3 propagate.py GRAPH.json [--md SIM.md] [--json SIM.json] [--rows FORECASTS.csv --decision <slug> --made <date>]
+    python3 propagate.py                                     # engine smoke test
+    python3 propagate.py GRAPH.json [--md SIM.md] [--json SIM.json] [--rows FORECASTS.csv --decision <slug> --made <date>]
 
 GRAPH.json keys are listed in the reference (section 2) and shown in DEMO below. Returns are daily log returns with no
 drift unless a node states one; the engine is linear in the shocks.

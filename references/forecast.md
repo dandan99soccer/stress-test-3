@@ -49,13 +49,14 @@ Each pass writes `FORECASTS.csv` beside its decision record, one row per forecas
 ## 10. Commands
 
 ```
-py -3 scripts/forecast_tools.py                                   # smoke test of the math
-py -3 scripts/forecast_ledger.py                                  # smoke test of the ledger
-py -3 scripts/forecast_ledger.py --init  <dir>                    # create LEDGER.csv and CALIBRATION.md in the shared folder
-py -3 scripts/forecast_ledger.py --check <FORECASTS.csv>          # required fields, ranges, groups, quantiles, extremes
-py -3 scripts/forecast_ledger.py --score <FORECASTS.csv>          # fill score and score_kind where outcome is present
-py -3 scripts/forecast_ledger.py --append <FORECASTS.csv> --to <LEDGER.csv> --run <id> --project <name>
-py -3 scripts/forecast_ledger.py --calibrate <LEDGER.csv> --out <CALIBRATION.md>
+# python3 here is `py -3` on Windows; `<skill dir>` is the folder holding SKILL.md
+python3 scripts/forecast_tools.py                                   # smoke test of the math
+python3 scripts/forecast_ledger.py                                  # smoke test of the ledger
+python3 scripts/forecast_ledger.py --init  <dir>                    # create LEDGER.csv and CALIBRATION.md in the shared folder
+python3 scripts/forecast_ledger.py --check <FORECASTS.csv>          # required fields, ranges, groups, quantiles, extremes
+python3 scripts/forecast_ledger.py --score <FORECASTS.csv>          # fill score and score_kind where outcome is present
+python3 scripts/forecast_ledger.py --append <FORECASTS.csv> --to <LEDGER.csv> --run <id> --project <name>
+python3 scripts/forecast_ledger.py --calibrate <LEDGER.csv> --out <CALIBRATION.md>
 ```
 
 ## 11. How levels 4 and 5 use this today

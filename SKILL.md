@@ -63,7 +63,7 @@ Any level can be told to spend only the plan's included usage. On "included usag
 
 ## Running a level
 
-Each procedure lives in its own file. Read the files a level needs and follow them exactly; do not run a level from memory. Open them together in one step where you can, and reuse any file already read in this conversation — it is still in context. Levels 2–5 read the level 1 files for the profiles, steps and reasoning they build on, not to run level 1 first.
+Each procedure lives in its own file, in the `references/` folder beside this one. Paths in these files are relative to the folder that holds this `SKILL.md`, called `<skill dir>` in the command blocks; nothing depends on the name that folder was installed under (the repository is `stress-test-3`; claude.ai may install it as `stress-test-31` or another name), so a resumed or scheduled run loads the skill by whatever name the surface lists it under, never by a remembered path. Read the files a level needs and follow them exactly; do not run a level from memory. Open them together in one step where you can, and reuse any file already read in this conversation — it is still in context. Levels 2–5 read the level 1 files for the profiles, steps and reasoning they build on, not to run level 1 first.
 
 - **Level 1:** `references/level-1.md` and `references/reasoning.md`. Open the output with `Mode: level 1 (default)`, or `(triggered by "level 1")` when asked for. If either file is missing, say so.
 - **Level 2:** the level 1 files and `references/level-2.md`. Open with `Mode: level 2 (triggered by "<phrase>")`, so it is visible which level ran and why. If the file is missing, say so and stay at level 1.

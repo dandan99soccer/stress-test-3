@@ -1,12 +1,12 @@
-"""The forecast ledger for stress-test-3: a run's FORECASTS.csv, the shared LEDGER.csv and CALIBRATION.md.
+"""The forecast ledger for the stress-test skill: a run's FORECASTS.csv, the shared LEDGER.csv and CALIBRATION.md.
 Standard library only; the math is imported from forecast_tools.py in the same folder.
 
-    py -3 forecast_ledger.py                                   # smoke test
-    py -3 forecast_ledger.py --init <dir>                      # create LEDGER.csv + CALIBRATION.md in the shared folder
-    py -3 forecast_ledger.py --check FORECASTS.csv             # required fields, ranges, groups, quantiles, extremes
-    py -3 forecast_ledger.py --score FORECASTS.csv             # fill score / score_kind where outcome is present
-    py -3 forecast_ledger.py --append FORECASTS.csv --to LEDGER.csv --run <id> --project <name>
-    py -3 forecast_ledger.py --calibrate LEDGER.csv --out CALIBRATION.md
+    python3 forecast_ledger.py                                   # smoke test
+    python3 forecast_ledger.py --init <dir>                      # create LEDGER.csv + CALIBRATION.md in the shared folder
+    python3 forecast_ledger.py --check FORECASTS.csv             # required fields, ranges, groups, quantiles, extremes
+    python3 forecast_ledger.py --score FORECASTS.csv             # fill score / score_kind where outcome is present
+    python3 forecast_ledger.py --append FORECASTS.csv --to LEDGER.csv --run <id> --project <name>
+    python3 forecast_ledger.py --calibrate LEDGER.csv --out CALIBRATION.md
 
 Columns and rules: references/forecast.md sections 2, 6, 8 and 9.
 """

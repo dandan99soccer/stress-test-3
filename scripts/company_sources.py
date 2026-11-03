@@ -2,7 +2,7 @@
 submissions(), companyfacts(), prices() as {ticker: [(date, close), ...]}, release_text(filing) and annual_text(filing) as
 (text, source id), and a retrieval log. Standard library only.
 
-    py -3 company_sources.py                        # offline smoke test on the fixture
+    python3 company_sources.py                        # offline smoke test on the fixture
     from company_sources import FIXTURE, FixtureSource, EdgarSource, read_prices
 """
 from __future__ import annotations

@@ -1,8 +1,8 @@
-"""Forecast math for stress-test-3: scores, intervals, likelihood-ratio updates, aggregation, coherence checks,
+"""Forecast math for the stress-test skill: scores, intervals, likelihood-ratio updates, aggregation, coherence checks,
 a cluster bootstrap and calibration tables. Standard library only. The ledger commands (check, score, append,
 calibrate, init) are in forecast_ledger.py, which imports this file.
 
-    py -3 forecast_tools.py          # smoke test
+    python3 forecast_tools.py          # smoke test
     from forecast_tools import brier, log_score, quantile_score, wilson, lr_update, replay_updates, \
         aggregate_binary, extremize, dispersion_logodds, cluster_bootstrap, calibration_table
 

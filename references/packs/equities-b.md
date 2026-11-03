@@ -50,9 +50,9 @@ A class enters as an **effect size in volatility units**, never as a portfolio r
 ## 4. The company record
 
 ```
-py -3 scripts/company_record.py                                   # offline smoke test on scripts/fixtures/company_record_fixture.json
-py -3 scripts/company_record.py --fixture <dir or json> --out <dir>
-py -3 scripts/company_record.py --cik <n> --ua "<name> <email>" --prices closes.csv [--ir urls.txt] [--consensus c.csv] --out <dir>
+python3 scripts/company_record.py                                   # offline smoke test on scripts/fixtures/company_record_fixture.json
+python3 scripts/company_record.py --fixture <dir or json> --out <dir>
+python3 scripts/company_record.py --cik <n> --ua "<name> <email>" --prices closes.csv [--ir urls.txt] [--consensus c.csv] --out <dir>
 ```
 
 From EDGAR (`data.sec.gov` submissions and company facts, the filing archive; ten requests a second, the user agent declared; filing text as data) and an investor-relations page list, it builds (a) guidance given against delivered by line item (revenue, gross margin, operating margin, EPS, capex) by quarter — inside or outside the range, the miss in percent; (b) beat or miss against the company's own guidance midpoint, or against consensus when the owner supplies a consensus file, with the one-day and 21-day moves from the price panel, keyed by the release's acceptance time so an after-close release maps to the next session; (c) customer concentration from the segment and concentration disclosures by fiscal year. Guidance sentences are extracted by pattern and carry their verbatim text; any number that crosses a threshold goes through the two-reader rule before use. A live fetch writes a retrieval log with the as-of date of every document.
@@ -71,7 +71,7 @@ The map is the **transmission graph** of `level-6-simulation.md`, written in Pha
 
 ## 8. Tools and routes
 
-`equity_dist.py`, `tax_lots.py`, `company_record.py`; `graph_fit.py`, `propagate.py`, `propagate_report.py` for the simulation; `forecast_tools.py` and `forecast_ledger.py` for the rows; `cite_check.py` over the sources table (all standard library; `py -3 -X utf8 <script>` with no arguments runs the smoke test). EDGAR and IR pages; the price panel `backtest/prices/closes.csv`; the files under `account/` (positions, lots, trades, summary); the brokerage's delayed chain on the laptop at compile only. Prediction markets and crowd forecasts: a price under ten cents is an upper bound; contracts read at the event level with the resolution text stored; macro contracts preferred; the legal status re-checked each run. Nothing that needs the laptop (the chain, the lots file) runs in the cloud, and a watcher never depends on a laptop-only source; the chat build has no connectors and no routines, so there the inputs are pasted or uploaded files.
+`equity_dist.py`, `tax_lots.py`, `company_record.py`; `graph_fit.py`, `propagate.py`, `propagate_report.py` for the simulation; `forecast_tools.py` and `forecast_ledger.py` for the rows; `cite_check.py` over the sources table (all standard library; `python3 -X utf8 <script>` with no arguments runs the smoke test). EDGAR and IR pages; the price panel `backtest/prices/closes.csv`; the files under `account/` (positions, lots, trades, summary); the brokerage's delayed chain on the laptop at compile only. Prediction markets and crowd forecasts: a price under ten cents is an upper bound; contracts read at the event level with the resolution text stored; macro contracts preferred; the legal status re-checked each run. Nothing that needs the laptop (the chain, the lots file) runs in the cloud, and a watcher never depends on a laptop-only source; the chat build has no connectors and no routines, so there the inputs are pasted or uploaded files.
 
 ## 9. Open items
 

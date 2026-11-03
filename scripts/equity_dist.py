@@ -6,10 +6,10 @@ through a transmission graph (propagate.py, references/level-6-simulation.md) an
 shock-case drop. Standard library only. The t math is in student_t.py, the lots in tax_lots.py, the printed report and
 the command line in equity_dist_report.py, which this file hands off to. Nothing here is advice or an order.
 
-    py -3 equity_dist.py                                  # smoke test
-    py -3 equity_dist.py --example > case.json            # every input key, as a worked example
-    py -3 equity_dist.py case.json [--json out.json]
-    py -3 equity_dist.py case.json --scenario GRAPH.json --shock SMH=-0.15:5 [--shock EWT=-0.2] | --scenario-name "<name>"
+    python3 equity_dist.py                                  # smoke test
+    python3 equity_dist.py --example > case.json            # every input key, as a worked example
+    python3 equity_dist.py case.json [--json out.json]
+    python3 equity_dist.py case.json --scenario GRAPH.json --shock SMH=-0.15:5 [--shock EWT=-0.2] | --scenario-name "<name>"
 
 All analytic: quantiles from the t inverse CDF; CVaR and regret from a 400-point quantile grid; the path drawdown probability
 is the reflection approximation, 2 x P(terminal below the level). One t variable on the combined factor-plus-idiosyncratic

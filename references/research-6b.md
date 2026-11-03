@@ -1,6 +1,6 @@
 # Research at level 6, part two — dispatch, the evidence rules, agent forms, checks
 
-Read this with `research-6.md`. The rules in section 2 come from the measured literature on research-agent accuracy compiled on 18 Oct 2026 (the report *Accurate research with Claude* in `~/.claude/sessions/stress-test-3-workspace/reports/`): every technique with a measured gain changes what the model sees or how its outputs are selected, not how it is asked to think. None of it was measured on the current Claude family, so each rule is a prior to re-test on the skill's own eval set. Grades: M measured in a study whose primary text was read, on contemporary non-Claude models unless said otherwise; V vendor-reported; G guidance or a tool constraint; I an inference across measured findings.
+Read this with `research-6.md`. The rules in section 2 come from the measured literature on research-agent accuracy compiled on 18 Oct 2026 (the report *Accurate research with Claude*, in the owner's workspace folder named in `references/owner-profile.md` where that file exists): every technique with a measured gain changes what the model sees or how its outputs are selected, not how it is asked to think. None of it was measured on the current Claude family, so each rule is a prior to re-test on the skill's own eval set. Grades: M measured in a study whose primary text was read, on contemporary non-Claude models unless said otherwise; V vendor-reported; G guidance or a tool constraint; I an inference across measured findings.
 
 ## 1. Dispatch by tool, stance and model
 
@@ -40,12 +40,12 @@ An agent gets only its question, phrased so an answer could be wrong; the flip t
 
 ## 5. Commands
 
-Run from any folder with the skill's absolute path.
+Run from any folder. `<skill dir>` is the folder that holds this skill's `SKILL.md`, whatever name it was installed under (the README's clone puts it at `~/.claude/skills/stress-test-3`; claude.ai may install it as `stress-test-31` or another name). Nothing in these files depends on that name. `python3` is `py -3` on Windows.
 
 ```
-py -3 ~/.claude/skills/stress-test-3/scripts/cite_check.py <brief.md> --ua "<name> <email>"   # liveness of every URL; archive lookup for dead ones
-py -3 ~/.claude/skills/stress-test-3/scripts/cite_check.py <brief.md> --out CITES.md          # table to a file; exit 1 if any URL is dead with no live archive, or if no URL was found
-py -3 ~/.claude/skills/stress-test-3/scripts/cite_check.py --selftest                         # offline smoke test
+python3 <skill dir>/scripts/cite_check.py <brief.md> --ua "<name> <email>"   # liveness of every URL; archive lookup for dead ones
+python3 <skill dir>/scripts/cite_check.py <brief.md> --out CITES.md          # table to a file; exit 1 if any URL is dead with no live archive, or if no URL was found
+python3 <skill dir>/scripts/cite_check.py --selftest                         # offline smoke test
 ```
 
 The user agent matters: some filing databases refuse requests without a name and contact, and the owner supplies them. A result of `blocked` is a page to check by hand, not a dead link.

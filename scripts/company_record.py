@@ -6,9 +6,9 @@ in xbrl_quarters.py; the sources (the saved fixture, or EDGAR through edgar.py) 
 outputs and the command line in company_record_report.py, which this file hands off to. The smoke test runs offline on the
 fixture and never fetches.
 
-    py -3 company_record.py                                        # offline smoke test on scripts/fixtures/company_record_fixture.json
-    py -3 company_record.py --fixture <json> --out <dir>
-    py -3 company_record.py --ticker TSM | --cik 1046179  --ua "Name email@example.com" --prices closes.csv [--benchmark SPY]
+    python3 company_record.py                                        # offline smoke test on scripts/fixtures/company_record_fixture.json
+    python3 company_record.py --fixture <json> --out <dir>
+    python3 company_record.py --ticker TSM | --cik 1046179  --ua "Name email@example.com" --prices closes.csv [--benchmark SPY]
         [--ir urls.txt] [--consensus consensus.csv] [--quarters 24] [--fy-end-month 12] --out <dir>
 
 A guidance target is "stated" when the sentence names the quarter or year, else "inferred" (the next quarter, or the fiscal

@@ -1,4 +1,4 @@
-"""Fit a transmission graph's sizes from a price panel (stress-test-3, references/level-6-simulation.md). Reads a closes CSV
+"""Fit a transmission graph's sizes from a price panel (stress-test skill, references/level-6-simulation.md). Reads a closes CSV
 (a Date column plus one column per instrument), cuts it at --asof (the look-ahead guard), turns it into daily log returns,
 and for every node that names a series writes: the own-shock vol and a t degrees-of-freedom from its kurtosis; for every
 node with parents, the OLS betas of its return on its parents' returns (lagged where the edge says so), each with a
@@ -7,8 +7,8 @@ each; and the panel's own base rates for the subject against the benchmark at ea
 drawdown frequencies, with the independent n). Everything it writes is marked measured (computed) with the rows used.
 Standard library only.
 
-    py -3 graph_fit.py                                                        # smoke test
-    py -3 graph_fit.py closes.csv --graph GRAPH.json --asof 2026-08-03 --out GRAPH.fit.json [--years 5] [--resid RESID.csv]
+    python3 graph_fit.py                                                        # smoke test
+    python3 graph_fit.py closes.csv --graph GRAPH.json --asof 2026-08-03 --out GRAPH.fit.json [--years 5] [--resid RESID.csv]
 
 A node reads the column of its own name, or the column named by its "series" key. Nodes without a series (an event, a
 quantity no panel holds) keep the sizes the lead wrote and their marks. The residual file holds each series node's own

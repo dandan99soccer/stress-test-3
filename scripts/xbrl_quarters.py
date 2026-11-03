@@ -1,7 +1,7 @@
 """Fiscal quarters and first-reported quarterly values from EDGAR company facts (XBRL), for company_record.py. Standard
 library only. A fiscal year ends in month `fem` (12 unless the filer says otherwise); quarter labels read 2026Q1.
 
-    py -3 xbrl_quarters.py                         # smoke test
+    python3 xbrl_quarters.py                         # smoke test
     from xbrl_quarters import CONCEPTS, q_end, quarter_of, lab, quarterly, actual
 
 quarterly() keeps, for each (start, end) period, the earliest filing's value (as first reported, the point-in-time rule),

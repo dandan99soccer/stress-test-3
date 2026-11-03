@@ -28,4 +28,4 @@ A pack **seeds; it does not run**. It names the quantities the level computes an
 
 ## Size and style
 
-Each pack file stays under 15,000 characters (the chat build packs it) and splits into `<pack>-b.md` when it must; scripts are standard-library Python with an offline smoke test under `__main__`, run with `py -3 -X utf8`; a pack's first run on a real decision is its test, and its Built note in the outline's section 10 records what that run changed.
+Each pack file stays under 15,000 characters (the chat build packs it) and splits into `<pack>-b.md` when it must; scripts are standard-library Python with an offline smoke test under `__main__`, run with `python3 -X utf8` (`py -3 -X utf8` is the Windows launcher form); a pack's first run on a real decision is its test, and its Built note in the outline's section 10 records what that run changed.
