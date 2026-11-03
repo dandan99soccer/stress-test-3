@@ -13,8 +13,8 @@ Everything below is Dan's, as recorded on the dates shown.
 
 ## Usage and cost
 
-- Plan: Team, Opus lead. Measured 2026-10-02: about 0.32M tokens per point of the 5-hour window (21.4M tokens cost 66 points). The table in `references/budget.md` was measured on this plan and is this profile's cost table until a newer measurement replaces it here.
-- Standing instruction: included usage only in every session, pause setting **wait** when nobody is watching, resume after the reset (`.claude/rules/usage-limits.md`, 2026-10-26 and 2026-10-28). Scheduled runs: at most four stress-test leads per window; at most two level 4 packets per Google Ads weekly.
+- Plan: Team, Opus lead. The cost table in `references/budget.md` ("Estimating the cost") was measured on this plan on 2026-10-02 and is this profile's cost table until a newer measurement is written here with its date; the figures live there, not here, so the two cannot drift.
+- Standing instruction: included usage only in every session, pause setting **wait** when nobody is watching, resume after the reset (`.claude/rules/usage-limits.md`, 2026-10-26 and 2026-10-28). **Paid ok is never set by this file**: only Dan's own words in the conversation, for that run, can grant paid usage. Scheduled runs: at most four stress-test leads per window; at most two level 4 packets per Google Ads weekly.
 
 ## Where things live
 
