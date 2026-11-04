@@ -6,14 +6,15 @@ A profile may add defaults, paths and permissions. It may never relax a rule in 
 
 Everything below is Dan's, as recorded on the dates shown.
 
-## Models
+## Models and effort
 
-- Fable may take an analysis step the lead judges complex or vital at levels 5 and 6, logged in `FABLE-LOG.md` with the reason (owner rule, 5 Oct 2026). Absent this line, Fable runs only as the level 5b adjudicator and never as an analysis step.
-- Lead Opus; research agents Haiku and Sonnet retrieve and never grade (the shared rule in `level-5b.md`, restated here because the usage rule below depends on it).
+- Dan, 4 Nov 2026: the model and effort chosen for the session are the ceiling, and the pass scales down from them only where it makes sense — retrieval to Sonnet, never lower; a Sonnet lead's agents stay on Sonnet; effort scaled the same way, because high effort on a step that does not need it spends usage too — and Opus is named as the lead at every level, 1 to 6, in that level's own file, which is what the usage rule's "where the file for that run names it" asks for. The shared rule is `level-5b.md`, "Models and effort"; the values are in each level's file: lead Opus at high for levels 1–4 and xhigh for 5–6; the blind pieces on Opus at high; research on Sonnet one effort step below the lead, never below medium; the Fable adjudication at the lead's effort.
+- Fable may take an analysis step the lead judges complex or vital at levels 5 and 6, at the lead's effort, logged in `FABLE-LOG.md` with the reason (owner rule, 5 Oct 2026). Absent this line, Fable runs only as the level 5b adjudicator and never as an analysis step.
+- Lead Opus; research agents Sonnet, retrieving and never grading; Haiku only for a scripted data pull the lead reads itself (the shared rule in `level-5b.md`, restated here because the usage rule below depends on it). The usage rule's "Haiku to retrieve" is read as its own sentence says, the cheapest model that does the step: for reading a source that is Sonnet; for running a script the lead wrote, Haiku.
 
 ## Usage and cost
 
-- Plan: Team, Opus lead. The cost table in `references/budget.md` ("Estimating the cost") was measured on this plan on 2026-10-02 and is this profile's cost table until a newer measurement is written here with its date; the figures live there, not here, so the two cannot drift.
+- Plan: Team, Opus lead. The cost table in `references/budget.md` ("Estimating the cost") was measured on this plan on 2026-10-02 and is this profile's cost table until a newer measurement is written here with its date; the figures live there, not here, so the two cannot drift. Those runs' effort was the session default of the day and was not recorded; from 4 Nov 2026 every run records the lead's effort on its Spend line and in `evals/results.csv`, so the next table can carry it.
 - Standing instruction: included usage only in every session, pause setting **wait** when nobody is watching, resume after the reset (`.claude/rules/usage-limits.md`, 2026-10-26 and 2026-10-28). **Paid ok is never set by this file**: only Dan's own words in the conversation, for that run, can grant paid usage. Scheduled runs: at most four stress-test leads per window; at most two level 4 packets per Google Ads weekly.
 
 ## Where things live

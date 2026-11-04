@@ -45,7 +45,7 @@ Page one (350 words or fewer: the plan's row, the thesis, the variant view or `n
 
 ## 7. Models and spend
 
-Lead Opus; research agents Haiku and Sonnet retrieve, never grade; the forecasters and the replication on the lead's model, named on the call; Fable only where the owner's rules already allow it, logged in `FABLE-LOG.md`. Plan usage only unless the owner says otherwise: usage read before the intake, at every phase boundary and before any fan-out; the wall is a wall; the simulation's gate sits on top. Expected spend: a level 5 plus about 20 to 30 points, measured and recorded.
+Lead Opus at xhigh; research agents Sonnet, one effort step below the lead, retrieve and never grade, with Haiku only for a scripted data pull the lead reads; the forecasters on the lead's model at the lead's effort and the replication on Opus at high, model and effort named on every call; Fable at the lead's effort only where the owner's rules already allow it, logged in `FABLE-LOG.md`; the shared rule is `level-5b.md`, "Models and effort". Plan usage only unless the owner says otherwise: usage read before the intake, at every phase boundary and before any fan-out; the wall is a wall; the simulation's gate sits on top. Expected spend: a level 5 plus about 20 to 30 points, measured and recorded.
 
 ## 8. Hard rules
 

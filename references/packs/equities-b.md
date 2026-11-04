@@ -4,7 +4,7 @@ Read with `equities.md`. Part one says what is computed and decided; this part s
 
 ## 1. The single-name reading order (fixed)
 
-Six steps in this order, each a retrieval agent (Sonnet; Haiku for a pull-and-tabulate step) returning verbatim passages with URL, publication date and access date in the return form of `research-6b.md` section 3. The lead reads them in this order before writing a hypothesis, because reading the real bear case first is cheaper anchoring protection than a generated one.
+Six steps in this order, each a retrieval agent (Sonnet, one effort step below the lead; Haiku only for a pull the lead's own script makes) returning verbatim passages with URL, publication date and access date in the return form of `research-6b.md` section 3. The lead reads them in this order before writing a hypothesis, because reading the real bear case first is cheaper anchoring protection than a generated one.
 
 1. **The published short thesis**: short reports, the lowest sell-side target with its note, borrow cost and short interest (dated to settlement), put skew. The short-stance agent of `research-6.md` 2.3 starts here and is told to extend it, not invent it.
 2. **The whole-filing year-over-year diff**, built locally, never Item 1A alone, with a watch list: risk factors, known trends in MD&A, critical accounting estimates, segment changes, non-GAAP reconciliations, the auditor, customer concentration. For a foreign private issuer, the 20-F and the 6-K exhibits.
