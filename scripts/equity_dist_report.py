@@ -2,9 +2,9 @@
 per-weight after-tax table paired against hold, the trim break-even lines, the drawdown rows and the sizing line, plus the
 scenario header when a transmission graph was run. Standard library only.
 
-    py -3 equity_dist_report.py                     # smoke test (renders the example case)
-    py -3 equity_dist.py case.json [--json out.json] [--scenario GRAPH.json (--shock NODE=size[:days] ... | --scenario-name NAME)]
-    py -3 equity_dist.py --example                  # print the example case as JSON
+    python3 equity_dist_report.py                     # smoke test (renders the example case)
+    python3 equity_dist.py case.json [--json out.json] [--scenario GRAPH.json (--shock NODE=size[:days] ... | --scenario-name NAME)]
+    python3 equity_dist.py --example                  # print the example case as JSON
 """
 from __future__ import annotations
 

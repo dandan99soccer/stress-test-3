@@ -1,9 +1,9 @@
 """Outputs and the command line for company_record.py (the equities pack): guidance.csv, events.csv, concentration.csv,
 retrieval_log.csv and RECORD.md in the output folder, each number with its source. Standard library only.
 
-    py -3 company_record_report.py                  # smoke test: writes the fixture's record to a temp folder
-    py -3 company_record.py --fixture <json> --out <dir>
-    py -3 company_record.py --ticker TSM --ua "Name email@example.com" --prices closes.csv [--benchmark SPY] [--ir urls.txt]
+    python3 company_record_report.py                  # smoke test: writes the fixture's record to a temp folder
+    python3 company_record.py --fixture <json> --out <dir>
+    python3 company_record.py --ticker TSM --ua "Name email@example.com" --prices closes.csv [--benchmark SPY] [--ir urls.txt]
         [--consensus consensus.csv] [--quarters 24] [--fy-end-month 12] --out <dir>
 """
 from __future__ import annotations

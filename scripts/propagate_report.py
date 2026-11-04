@@ -1,9 +1,9 @@
-"""Reports for the propagation engine (propagate.py, stress-test-3): the markdown summary a packet quotes from, the
+"""Reports for the propagation engine (propagate.py, stress-test skill): the markdown summary a packet quotes from, the
 FORECASTS.csv rows in the ledger format of references/forecast.md, and the command line. Standard library only.
 
-    py -3 propagate_report.py                               # smoke test (rows pass forecast_ledger.check_run)
-    py -3 propagate.py GRAPH.json [--md SIM.md] [--json SIM.json] [--paths N] [--seed S] [--no-sens]
-    py -3 propagate.py GRAPH.json --rows FORECASTS.csv --decision <slug> --made YYYY-MM-DD [--cutoff 2026-06]
+    python3 propagate_report.py                               # smoke test (rows pass forecast_ledger.check_run)
+    python3 propagate.py GRAPH.json [--md SIM.md] [--json SIM.json] [--paths N] [--seed S] [--no-sens]
+    python3 propagate.py GRAPH.json --rows FORECASTS.csv --decision <slug> --made YYYY-MM-DD [--cutoff 2026-06]
         [--resolve-dates d1,d2 (one per horizon)] [--source "price panel"]
 
 Rows carry forecaster "model" and method "simulation propagate.py <graph hash>"; the panel base rates graph_fit.py wrote go

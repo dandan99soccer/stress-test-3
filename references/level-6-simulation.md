@@ -35,10 +35,12 @@ Transmission, not direction: the graph says how a move travels, never whether it
 
 ## 7. Commands
 
+`<skill dir>` is the folder holding this skill's `SKILL.md`, under whatever name it was installed; `python3` is `py -3` on Windows.
+
 ```
-py -3 ~/.claude/skills/stress-test-3/scripts/graph_fit.py closes.csv --graph GRAPH.json --asof 2026-08-03 --out GRAPH.fit.json --resid RESID.csv
-py -3 ~/.claude/skills/stress-test-3/scripts/propagate.py GRAPH.fit.json --md SIMULATION.md --json SIMULATION.json
-py -3 ~/.claude/skills/stress-test-3/scripts/propagate.py GRAPH.fit.json --rows FORECASTS.sim.csv --decision <slug> --made 2026-08-03 --cutoff 2026-06 --resolve-dates 2026-09-02,2026-11-03
-py -3 ~/.claude/skills/stress-test-3/scripts/forecast_ledger.py --check FORECASTS.sim.csv
-py -3 ~/.claude/skills/stress-test-3/scripts/propagate.py                      # smoke tests; also graph_fit.py and propagate_report.py
+python3 <skill dir>/scripts/graph_fit.py closes.csv --graph GRAPH.json --asof 2026-08-03 --out GRAPH.fit.json --resid RESID.csv
+python3 <skill dir>/scripts/propagate.py GRAPH.fit.json --md SIMULATION.md --json SIMULATION.json
+python3 <skill dir>/scripts/propagate.py GRAPH.fit.json --rows FORECASTS.sim.csv --decision <slug> --made 2026-08-03 --cutoff 2026-06 --resolve-dates 2026-09-02,2026-11-03
+python3 <skill dir>/scripts/forecast_ledger.py --check FORECASTS.sim.csv
+python3 <skill dir>/scripts/propagate.py                      # smoke tests; also graph_fit.py and propagate_report.py
 ```

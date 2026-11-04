@@ -2,7 +2,7 @@
 inverse CDF by bisection, and a scaled-t distribution object with quantiles, CDF, CVaR and partial expectations from a
 400-point quantile grid. Standard library only.
 
-    py -3 student_t.py                     # smoke test
+    python3 student_t.py                     # smoke test
     from student_t import Dist, t_cdf, t_quantile
 
 Dist(mean, sd, df) is mean + scale * t_df with scale chosen so that sd is the standard deviation (df > 2). The grid runs

@@ -1,13 +1,13 @@
-"""Citation liveness check for stress-test-3 briefs. Standard library only.
+"""Citation liveness check for stress-test briefs. Standard library only.
 
 Extracts every http(s) URL from the files given, checks that each resolves (HEAD, then GET after any HEAD
 failure), and for a dead one asks the Wayback Machine for the closest archived copy with a 200 status.
 Liveness is not support: a resolving page may still not say what the sentence claims; that is the second
 reader's job (research-6b.md). A 401, 403 or 429 is reported as `blocked`, not dead: check it by hand.
 
-    py -3 cite_check.py brief.md [more files] [--out CITES.md] [--timeout 15] [--no-archive] [--json]
+    python3 cite_check.py brief.md [more files] [--out CITES.md] [--timeout 15] [--no-archive] [--json]
                         [--ua "Name email"] [--timestamp YYYYMMDD]
-    py -3 cite_check.py --selftest          # offline smoke test, no network
+    python3 cite_check.py --selftest          # offline smoke test, no network
 
 Exit 0 when every URL resolves, is blocked, or has a live archived copy; 1 when any is dead with no archive
 or when no URL was found at all (a vacuous pass is a failure); 2 on usage error.
@@ -27,7 +27,7 @@ from typing import Dict, List, Optional
 
 URL_RE = re.compile(r"https?://[^\s<>\[\]\"'`*|]+")
 TRAIL = ".,;:!?]}>'\"*|"   # a trailing ')' is stripped only when unbalanced, so wiki-style URLs survive
-DEFAULT_UA = "stress-test-3 cite_check (liveness check for a research brief)"
+DEFAULT_UA = "stress-test cite_check (liveness check for a research brief)"
 BLOCKED = {401, 403, 429, 451, 999}
 
 

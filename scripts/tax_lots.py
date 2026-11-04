@@ -4,7 +4,7 @@ owner's rates, list the lots that turn long-term soon, the wash-sale window, and
 library only. Rates are the owner's facts and are printed marked [owner]; netting against other gains, state tax, the
 $3,000 ordinary-loss limit and the ADR-versus-ordinary wash-sale question stay with the owner and a professional.
 
-    py -3 tax_lots.py                                   # smoke test
+    python3 tax_lots.py                                   # smoke test
     from tax_lots import read_lots_csv, select, realized, embedded, crossings, wash_window, tax_block
 
 A lot is {"shares", "basis" (per share), "acquired" (YYYY-MM-DD), "id"}. Long-term means held more than one year:

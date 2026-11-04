@@ -1,6 +1,6 @@
 # Research at level 6, part two — dispatch, the evidence rules, agent forms, checks
 
-Read this with `research-6.md`. The rules in section 2 come from the measured literature on research-agent accuracy compiled on 18 Oct 2026 (the report *Accurate research with Claude* in `~/.claude/sessions/stress-test-3-workspace/reports/`): every technique with a measured gain changes what the model sees or how its outputs are selected, not how it is asked to think. None of it was measured on the current Claude family, so each rule is a prior to re-test on the skill's own eval set. Grades: M measured in a study whose primary text was read, on contemporary non-Claude models unless said otherwise; V vendor-reported; G guidance or a tool constraint; I an inference across measured findings.
+Read this with `research-6.md`. The rules in section 2 come from the measured literature on research-agent accuracy compiled on 18 Oct 2026 (the report *Accurate research with Claude*, in the owner's workspace folder named in `references/owner-profile.md` where that file exists): every technique with a measured gain changes what the model sees or how its outputs are selected, not how it is asked to think. None of it was measured on the current Claude family, so each rule is a prior to re-test on the skill's own eval set. Grades: M measured in a study whose primary text was read, on contemporary non-Claude models unless said otherwise; V vendor-reported; G guidance or a tool constraint; I an inference across measured findings.
 
 ## 1. Dispatch by tool, stance and model
 
@@ -35,17 +35,17 @@ An agent gets only its question, phrased so an answer could be wrong; the flip t
 - **Shared origin.** Two sources that cite one origin count as one; the brief shows the citation chain for the top findings.
 - **Look-ahead.** Every data and replay route carries the as-of date on each input; a replay uses only inputs dated before its decision date; the pack records the running model's training cutoff beside every forecast, because the model's memory is a second leak that date filters do not close. A point-in-time run is sealed: the lead reads a T-dated input pack built before it reads anything else (the decision; the rules in force at T from the version history, or the owner's chosen rules stripped of post-T dates and account facts; the packet, the bundle, the filings) and no project readme, plan or policy file; truth and the full price panel sit outside the session's reach until scoring; a manifest with the hashes of the pack, the priors and the skill files is committed before research; horizons are counted in trading days on the exchange calendar (the first run's harness counted calendar days, so "+63d" was 44 trading days); web search is off; and every attempt on a date is kept and scored, none dropped.
 - **Judging.** When a model judges research output, one call with a numeric score and pass or fail on accuracy, citation support, completeness, source quality and efficiency; answer order swapped; a model that did not write the draft; a human spot-check (V, with position and self-preference biases measured on older models).
-- **The eval set.** The harness answer keys in `~/.claude/sessions/stress-test-3-workspace/answer-keys/` (eight decisions today, to grow to about twenty) are re-run when a rule changes, so each rule above gets an effect size measured on this skill rather than borrowed.
+- **The eval set.** The decisions with known outcomes in the skill's `evals/` folder (`evals/README.md`: a sealed brief and key per decision, one results row per run, `scripts/eval_tally.py` for the per-level rates and the paired comparison), plus the owner's own answer keys where `references/owner-profile.md` names them, are re-run when a rule changes, so each rule above gets an effect size measured on this skill rather than borrowed.
 - **Closing checks.** The missed-question agent's second pass (level 6) and the research pre-mortem close the research, and both go in the brief.
 
 ## 5. Commands
 
-Run from any folder with the skill's absolute path.
+Run from any folder. `<skill dir>` is the folder that holds this skill's `SKILL.md`, whatever name it was installed under (the README's clone puts it at `~/.claude/skills/stress-test-3`; claude.ai may install it as `stress-test-31` or another name). Nothing in these files depends on that name. `python3` is `py -3` on Windows.
 
 ```
-py -3 ~/.claude/skills/stress-test-3/scripts/cite_check.py <brief.md> --ua "<name> <email>"   # liveness of every URL; archive lookup for dead ones
-py -3 ~/.claude/skills/stress-test-3/scripts/cite_check.py <brief.md> --out CITES.md          # table to a file; exit 1 if any URL is dead with no live archive, or if no URL was found
-py -3 ~/.claude/skills/stress-test-3/scripts/cite_check.py --selftest                         # offline smoke test
+python3 <skill dir>/scripts/cite_check.py <brief.md> --ua "<name> <email>"   # liveness of every URL; archive lookup for dead ones
+python3 <skill dir>/scripts/cite_check.py <brief.md> --out CITES.md          # table to a file; exit 1 if any URL is dead with no live archive, or if no URL was found
+python3 <skill dir>/scripts/cite_check.py --selftest                         # offline smoke test
 ```
 
 The user agent matters: some filing databases refuse requests without a name and contact, and the owner supplies them. A result of `blocked` is a page to check by hand, not a dead link.
