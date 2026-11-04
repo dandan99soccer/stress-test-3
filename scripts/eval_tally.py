@@ -5,8 +5,8 @@ comparison between adjacent levels on the decisions run at both. Standard librar
     python3 eval_tally.py evals/results.csv      # the tally
     python3 eval_tally.py evals/results.csv --compare 1 4   # one specific pair of levels
 
-Columns of results.csv: slug, level, run_date, model, skill_commit, call_matched, kill_criterion_right,
-weakest_link_named, first_step_right, points, words, notes. Measures are 1, 0, 0.5 or na; a row whose
+Columns of results.csv: slug, level, run_date, model, effort, skill_commit, call_matched,
+kill_criterion_right, weakest_link_named, first_step_right, points, words, notes. Measures are 1, 0, 0.5 or na; a row whose
 notes say "void" is skipped. Rows are never edited; a correction is a new row that names the old one.
 """
 from __future__ import annotations
@@ -121,14 +121,14 @@ def _smoke() -> None:
     assert 0.25 < lo < 0.5 < hi < 0.75, (lo, hi)
     assert wilson(0, 0) == (0.0, 1.0)
     rows = [
-        "slug,level,run_date,model,skill_commit,call_matched,kill_criterion_right,weakest_link_named,first_step_right,points,words,notes",
-        "a,1,2026-11-01,opus,abc,1,na,1,1,0.5,400,",
-        "a,2,2026-11-01,opus,abc,1,1,1,1,2,900,",
-        "b,1,2026-11-01,opus,abc,0,0,0,1,0.4,380,",
-        "b,2,2026-11-01,opus,abc,1,1,1,1,2.5,950,",
-        "b,2,2026-10-01,opus,old,0,0,0,0,2.5,950,superseded by the later run",
-        "c,1,2026-11-01,opus,abc,0.5,na,1,0,0.6,420,",
-        "c,2,2026-11-01,opus,abc,0,0,0,0,2,880,void: key leaked",
+        "slug,level,run_date,model,effort,skill_commit,call_matched,kill_criterion_right,weakest_link_named,first_step_right,points,words,notes",
+        "a,1,2026-11-01,opus,high,abc,1,na,1,1,0.5,400,",
+        "a,2,2026-11-01,opus,high,abc,1,1,1,1,2,900,",
+        "b,1,2026-11-01,opus,high,abc,0,0,0,1,0.4,380,",
+        "b,2,2026-11-01,opus,high,abc,1,1,1,1,2.5,950,",
+        "b,2,2026-10-01,opus,,old,0,0,0,0,2.5,950,superseded by the later run",
+        "c,1,2026-11-01,opus,high,abc,0.5,na,1,0,0.6,420,",
+        "c,2,2026-11-01,opus,high,abc,0,0,0,0,2,880,void: key leaked",
     ]
     with tempfile.TemporaryDirectory() as d:
         p = os.path.join(d, "results.csv")

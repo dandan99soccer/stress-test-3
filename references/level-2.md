@@ -42,8 +42,8 @@ End by reporting what you actually checked and what you could not, including whi
 
 **Without subagents.** Chat environments often have none. Do not skip level 2 for that reason, and do not pretend the isolation is real. Approximate it with files: the generated options with the screen's discards in one file; the facts file with its measured, estimated and inferred-case sections; each lens written as its own section against the options and facts only, before any synthesis; the provisional plan, then the aimed round's findings appended to the facts file and the plan restated; the plan, and only the plan, in a second file; the adversarial pass written from that file alone, then a ruling on each objection. Label it "approximated isolation" and say one model did all of it. With no file system either, write the same sections in the same order inside the reply, and say so.
 
-### Model and cost policy
+### Model, effort and cost
 
-Prefer, per step: research and extraction on a fast model; lens agents inherit; synthesis and the adversarial check on the strongest model available. These are preferences, not guarantees — subagent model routing does not always take effect.
+Lead Opus at high. The lens agents and the adversarial pass are judgment and run on the lead's model at the lead's effort (`opus`, `high`, both named on the call); the lookups of Phase 0 and the aimed round run in-line, or go to Sonnet at medium when handed out. The session's model and effort are the ceiling — on a lead below Opus or below high every call is capped at the lead's and the Mode line says so — and the shared rule, with the Spend line's count of agents by model and effort, is `level-5b.md`, "Models and effort". Naming is a preference the environment may ignore: where it does, the agent inherits the lead's and the Spend line says so.
 
 **So never let cost depend on a model label.** Control cost with what you do control: the number of agent calls, and how much context each receives. A level 2 pass is six calls with tight prompts, not twelve with the whole conversation pasted in.

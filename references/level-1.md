@@ -83,6 +83,8 @@ Name the decision owner when it is not the user: then the output is a proposal t
 
 **9. Trade-offs.** What the chosen path gives up, including what the runner-up would have given you.
 
+**Model and effort.** Opus at high, in the session's own context: no agents, so nothing scales down. A level 1 is the only reasoning its decision gets and costs under a point either way, and the lookups of steps 3 and 6 are what a lower effort cuts first. On a session set lower — a Sonnet lead, or Opus at medium — the pass runs there and says so in its first line. The shared rule is `level-5b.md`, "Models and effort".
+
 ## Failures the steps do not already catch
 
 **Sound but not allowed** is the worse failure, because it is the part that gets acted on. Step 6 exists for it; do not let it be the step that gets skipped.

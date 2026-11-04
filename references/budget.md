@@ -23,7 +23,7 @@ The usage card shows a 5-hour window, a weekly window for all models, and weekly
 
 ## Estimating the cost
 
-The first estimate comes from this table — measured 2026-10-02 on a Team plan, where about 0.32M tokens cost one point of the 5-hour window (21.4M tokens cost 66 points), Opus lead. Points are of the 5-hour window. Where `references/owner-profile.md` exists and carries a newer table measured on the owner's own plan, that table is the prior and this one is noted as stale.
+The first estimate comes from this table — measured 2026-10-02 on a Team plan, where about 0.32M tokens cost one point of the 5-hour window (21.4M tokens cost 66 points), Opus lead, at the session default effort of the day, which was not recorded. Points are of the 5-hour window. Where `references/owner-profile.md` exists and carries a newer table measured on the owner's own plan, that table is the prior and this one is noted as stale.
 
 | Level | Tokens measured | 5-hour points |
 |---|---|---|
@@ -35,7 +35,7 @@ The first estimate comes from this table — measured 2026-10-02 on a Team plan,
 | 5, first sitting: Opus lead, 2 replications, 7 assessments, 3 derivations, red team | measured 16 Oct 2026, two runs | 65–70 |
 | 5, complete | not yet measured in one window | quote 70–100 |
 
-A Fable lead costs about 2.5 times the Opus figure; a Sonnet lead about 0.6 times. By phase, for the mid-pass estimate — level 4: ground and intake 1, aimed rounds 1–3, the isolated assessments, derivations and red team 3–6, packet 1; level 5 on top: plan 1, research and its agents 6–10, the two replications 8–12 (4–6 each, each a level 4 through first synthesis), adjudication 1–2, re-open round 1–2, brief and packet 2–3. The table is for the first estimate only: at each boundary, write the points the finished phase actually cost (the change in percent used between reads) and re-estimate the remainder from that rate. When the usage tool's conversion looks different from the table — a different plan, a changed limit — the measured rate governs and the table is noted as stale. The cost of continuing past the wall, for the pause message, is the points past the wall times 0.32M tokens at the lead model's API rate, labeled an estimate.
+A Fable lead costs about 2.5 times the Opus figure on the lead's own steps — the spawned pieces keep their level's model (`level-5b.md`), so by the phase shares below a Fable level 5 is roughly 1.5 to 2 times an Opus one, not 2.5 — and a Sonnet lead about 0.6 times. Effort moves the cost by a factor not yet measured: a run above the level's named effort is estimated high until the Spend lines and `evals/results.csv`, which record the lead's effort from 4 Nov 2026, give the next table an effort column. By phase, for the mid-pass estimate — level 4: ground and intake 1, aimed rounds 1–3, the isolated assessments, derivations and red team 3–6, packet 1; level 5 on top: plan 1, research and its agents 6–10, the two replications 8–12 (4–6 each, each a level 4 through first synthesis), adjudication 1–2, re-open round 1–2, brief and packet 2–3. The table is for the first estimate only: at each boundary, write the points the finished phase actually cost (the change in percent used between reads) and re-estimate the remainder from that rate. When the usage tool's conversion looks different from the table — a different plan, a changed limit — the measured rate governs and the table is noted as stale. The cost of continuing past the wall, for the pause message, is the points past the wall times 0.32M tokens at the lead model's API rate, labeled an estimate.
 
 ## The pause
 
@@ -51,7 +51,7 @@ Write it as files, with `RESUME.md` first, somewhere that outlives the session: 
 
 - the skill as it was loaded — the name the surface lists it under and the folder it was read from — and, for a cloud checkpoint, the repository and branch that hold this folder;
 - the decision as stated, the owner, the deadline, and the Step 0 result (scope, kind of question, what was checked);
-- the level and the trigger phrase that ran it, the pace (standard or fast), the mode phrase, the pause setting, and the lead model;
+- the level and the trigger phrase that ran it, the pace (standard or fast), the mode phrase, the pause setting, and the lead model and effort;
 - the intake questions with the owner's answers, and every default marked `assumed (intake)` — the resume never re-asks;
 - the phase reached and the exact next step; the pre-registered flip conditions and every flip threshold written so far;
 - the paths of every file produced — ledger, options, strategy table, model or robustness table, research plan, agent returns, brief, isolated sections — and, for blind pieces in flight (replications, derivations, red-team passes, the adjudicator), whether each returned: a returned one is kept as a file; one that had not returned is re-run after the reset, never counted half-done;
