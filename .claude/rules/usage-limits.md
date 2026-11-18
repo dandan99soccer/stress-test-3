@@ -4,7 +4,7 @@ Dan, 2026-10-28: "make it so these repositories and all functions don't go over 
 Dan, 2026-10-26: "always resume on reset for all of claude code unless otherwise stated."
 
 This file is the same in every place it lives: `.claude/rules/usage-limits.md` in each of Dan's repos
-(Send-Time, belarc-google-ads, Advisor-marketing, email-draft-training, belarc-cloud-sessions, Claude-Code,
+(Send-Time, belarc-google-ads, Advisor-marketing, email-draft-training, belarc-cloud-sessions, belarc-geo-blog, Claude-Code,
 stress-test-3, Sales-agents, stress-test, ibkr-investing), and `~/.claude/rules/usage-limits.md` on the laptop,
 which covers every project there. It binds every session, scheduled run, sub-agent, workflow and skill in these repos.
 
@@ -32,11 +32,24 @@ which covers every project there. It binds every session, scheduled run, sub-age
   research beyond what the run's file asks for, reports in the lines the file allows.
 - Where a usage tool exists (`get_usage` on the laptop), read it before starting, before spawning any agent and
   at every phase boundary, and apply stress-test-3 `references/budget.md`: fit or pause, hard stop at 95% on any
-  window, pause setting **wait** when nobody is watching. Cloud sessions have no usage tool: the usage-limit
-  warning is the stop signal, so act on it the moment it shows (section 3).
-- Scheduled runs are built so one run fits a fraction of a window: at most four stress-test leads per window,
-  at most two level 4 packets per Google Ads weekly, one lead per child session, and every run ends with its
+  window, pause setting **wait** when nobody is watching. Cloud sessions have no `get_usage`: `get_session` (no id)
+  reads a status only (`allowed`, `allowed_warning`, `rejected`), and the usage-limit warning is the stop signal, so act
+  on it the moment it shows (section 3).
+- Scheduled runs are built so one run fits a fraction of a window: at most two level 4 packets per Google Ads
+  weekly, one lead per child session, and every run ends with its
   `Usage (est.): this run ~N tokens (~$X) API-equivalent` line so the weekly usage ledger can see it.
+- Sub-agent count (Dan, 2026-11-06: "make it so there can be many more than 4 sub-agents"): no rule caps a run at four agents, leads or
+  child sessions. They start in waves no wider than the repo's CLAUDE_CODE_WORKFLOW_MAX_CONCURRENT_AGENTS (16 where the repo's
+  .claude/settings.json does not set it; ibkr-investing sets 32 since 2026-11-18) and the Agent tool's gate
+  CLAUDE_CODE_MAX_CONCURRENT_SUBAGENTS (20 by default; ibkr-investing sets 40), and a new wave starts only while the usage read says `allowed`. On a warning no new agent starts:
+  the running ones finish their step and checkpoint, the rest wait for the reset. Usage, not the count, is the wall: eight
+  concurrent leads emptied a five-hour window in twenty minutes, so a wide wave reaches the wall sooner by the clock, at the
+  same cost. With Extra usage on at the account, agents already running can carry past 100% before any of them sees the
+  warning: keep it off (Dan's step, section 1).
+- Ceilings are not targets (Dan, 2026-11-18: "Usage should be not increased, especially for scheduled runs that are not me in front of
+  the computer"): a higher depth, concurrency or wave limit changes how fast the same work finishes, never how much is started. Every
+  scheduled or unattended run starts no more agents, readers, leads or child sessions than its file named before the limits rose; a wider
+  per-run setting (such as ibkr-investing's `"wide": true`) is used only when Dan asks for it in a session Dan is attending.
 - A run that would need more than the window has left does not shrink the owner's named level and does not
   spend past the wall: it checkpoints at the boundary and resumes after the reset.
 
