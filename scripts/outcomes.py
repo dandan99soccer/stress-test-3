@@ -12,6 +12,8 @@ and which this file hands off to. Standard library only; the t fit is student_t.
                                                            # set, with the spread across the sets as each row's range
     ... --rows FORECASTS.csv                               # levels 4-6: put the rows in the run's file instead of --log
     ... --tsv                                              # print the ledger rows tab-separated, for a connected sheet
+    ... --not-logged "chat keeps no files"                 # no ledger in reach: the Logged line says why
+    ... --exhaustive                                       # the rows are cuts of one measured number: no Not listed row
     python3 outcomes.py --all-of 0.8,0.7,0.9               # a plan that needs every part: independent .. fully linked
     python3 outcomes.py --bins --q -0.25,-0.08,0.01,0.09,0.26 --cuts -0.15,0.10   # a quantile forecast as bucket percentages
     python3 outcomes.py --bins --dist 0.02,0.24,4 --cuts -0.15,0.10               # the same from a mean, an sd and t df
@@ -116,6 +118,8 @@ def build(a) -> Tuple[Optional[dict], List[str], List[str]]:
         errs.append("each --outcome needs its own label")
     if not 1 <= int(a.level) <= 6:
         errs.append("--level is 1 to 6")
+    if not a.call:
+        errs.append("--call names the call the rows belong to (with --fact, the check whose answers they are)")
     made = a.made or date.today().isoformat()
     try:
         if not a.by or date.fromisoformat(a.by) < date.fromisoformat(made):
@@ -123,10 +127,15 @@ def build(a) -> Tuple[Optional[dict], List[str], List[str]]:
     except ValueError:
         errs.append("--by and --made are dates as YYYY-MM-DD")
     spread: List[Optional[Tuple[float, float]]] = [None] * (len(named) + 1)
+    if a.exhaustive and (a.sets or a.other):
+        errs.append("--exhaustive rows are cuts of one measured number and add to 100 on their own: no --sets, no --other")
     if a.sets:
         if any(n[2] is not None for n in named):
             errs.append("give the numbers on the rows or as --sets, not both")
-        sets = [[float(x) for x in s.replace("%", "").split(",") if x.strip()] for s in a.sets]
+        try:
+            sets = [[float(x) for x in s.replace("%", "").split(",") if x.strip()] for s in a.sets]
+        except ValueError:
+            sets = [[]]
         sets = [s + [100.0 - sum(s)] if len(s) == len(named) else s for s in sets]
         if any(len(s) != len(named) + 1 or min(s) < 0 or abs(sum(s) - 100) > 0.5 for s in sets):
             errs.append("each of --sets has one number per --outcome row (plus, optionally, the not-listed share) and adds to 100")
@@ -138,12 +147,15 @@ def build(a) -> Tuple[Optional[dict], List[str], List[str]]:
         if any(v is None for v in vals):
             errs.append("every --outcome needs its number: 'Label: text=55' (or pass --sets)")
             vals = [v or 0.0 for v in vals]
-        other = a.other if a.other is not None else 100.0 - sum(vals)
+        other = 0.0 if a.exhaustive else (a.other if a.other is not None else 100.0 - sum(vals))
         if abs(sum(vals) + other - 100) > 0.5 or other < 0:
             errs.append(f"the rows add to {sum(vals) + max(other, 0):g}, not 100")
-        pcts = [int(round(v)) for v in vals] + [int(round(other))]
+            pcts = [int(round(v)) for v in vals] + [int(round(max(other, 0)))]
+        else:
+            pcts = round_to_100(vals + [other])  # whole numbers that still add to exactly 100
     rows = [dict(id=f"O{i + 1}", label=n[0], text=n[1], pct=p, spread=sp) for i, (n, p, sp) in enumerate(zip(named, pcts, spread))]
-    rows.append(dict(id="OX", label="Not listed", text=OTHER_TEXT, pct=pcts[-1], spread=spread[-1]))
+    if not a.exhaustive:
+        rows.append(dict(id="OX", label="Not listed", text=OTHER_TEXT, pct=pcts[-1], spread=spread[-1]))
     for r in rows:
         if r["id"] == "OX" and r["pct"] < FLOOR:
             errs.append(f"Not listed at {r['pct']}%: leave at least {FLOOR}% for what is not listed, whatever backs the other rows")
@@ -179,7 +191,7 @@ def build(a) -> Tuple[Optional[dict], List[str], List[str]]:
         rng = (min(base["lo"], head), max(base["hi"], head))
     else:
         chk.append("give the headline row its range, the lowest and the highest plausible number written before the best one (--range lo-hi)")
-    ps = [r["pct"] for r in rows[:-1]]
+    ps = [r["pct"] for r in rows if r["id"] != "OX"]
     if len(ps) >= 2 and max(ps) - min(ps) <= 10:
         chk.append("the named rows sit within 10 points of each other: an even split is what no information looks like; set each "
                    "from its base rate, or say that the record is silent")
@@ -209,6 +221,8 @@ def basis_text(s: dict) -> str:
                f"{', estimated' if b['n'] < 30 else ''})")
     elif b:
         txt = f"base rate {b['rate']:g}% ({cls + ', ' if cls else ''}estimated)"
+    elif cls:
+        txt = cls  # a named reference with no count of its own, such as a market-implied distribution
     else:
         txt = "judgment; no base rate found"
     if s["reason"]:
@@ -266,7 +280,7 @@ def _ns(**k) -> argparse.Namespace:
     return argparse.Namespace(**{**dict(decision="pilot", level=1, call="Pilot first", by="2027-03-31", made="2026-11-27", outcome=None, option=None,
                                         sets=None, other=None, range=None, base=None, base_rate=None, base_class=None, reason=None, why=None, high=None,
                                         low=None, source=None, cutoff="2026-06", how=None, forecaster=None, log=False, rows=None, tsv=False, to=None,
-                                        run=None, project="demo", split=False, compact=False, fact=False), **k})
+                                        run=None, project="demo", split=False, compact=False, fact=False, not_logged=None, exhaustive=False), **k})
 
 
 THREE = ["Works: 20+ qualified leads a month=55", "Partly: leads up, under 20=25", "Fails: no lift, kill line hit=15"]
@@ -302,7 +316,14 @@ def _smoke() -> None:
     assert any("at least 5%" in e for e in build(ns(outcome=["Works: x=60", "Fails: y=38"], base_class="a named class"))[1])
     assert build(ns(outcome=["Works: x=92", "Fails: y=3"], base_class="a named class", range="85-97", high="h", low="l"))[1] == []
     assert any("not both" in e for e in build(ns(outcome=three, sets=["55,25,15,5"]))[1])
+    assert any("adds to 100" in e for e in build(ns(outcome=["Works: a", "Fails: b"], sets=["55,x,5"]))[1]) and any("--call" in e for e in build(ns(outcome=three, call=None))[1])
+    assert [r["pct"] for r in build(ns(outcome=["Works: a=52.5", "Partly: b=27.5", "Fails: c=14.5"], other=5.5))[0]["rows"]] == [53, 28, 14, 5], "decimals are rounded so the rows still add to exactly 100"
     assert any("--high" in e for e in build(ns(outcome=three, log=True))[1]) and any("--high" in c for c in build(ns(outcome=three))[2])
+    # rows cut from one measured number (level 6): nothing is left unlisted, and they still add to 100
+    s3, e3, _ = build(ns(outcome=["Bear: below -15%=19", "Base: -15% to +10%=48", "Bull: above +10%=33"], exhaustive=True, range="14-24", high="h", low="l"))
+    assert e3 == [] and [r["id"] for r in s3["rows"]] == ["O1", "O2", "O3"] and "Not listed" not in render(s3) and FL.check_run(ledger_rows(s3)) == []
+    assert basis_text(build(ns(outcome=three, base_class="market reference, t df 4", level=6, how="reference bins"))[0]) == "market reference, t df 4; level 6, reference bins"
+    assert any("not 100" in e for e in build(ns(outcome=["Bear: x=19", "Bull: y=33"], exhaustive=True))[1])
     # checks: an even split, a number outside its base rate's interval, a better alternative, a missing range
     c = build(ns(outcome=["Works: x=35", "Partly: y=30", "Fails: z=30"], option=["Other plan=50"], base="1/20", high="h", low="l"))[2]
     assert any("even split" in x for x in c) and any("outside the base rate" in x for x in c) and any("Other plan has odds" in x for x in c)

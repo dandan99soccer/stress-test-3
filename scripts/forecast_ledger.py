@@ -210,7 +210,7 @@ def init_folder(folder: str) -> None:
     if not os.path.exists(ledger):
         write_csv(ledger, [], LEDGER_COLUMNS)
     with open(os.path.join(folder, "CALIBRATION.md"), "w", encoding="utf-8") as fh:
-        fh.write(calibration_report(read_csv(ledger)))
+        fh.write(calibration_report(read_ledger(folder)))  # LEDGER.csv and any run files already under runs/
 
 
 def _smoke() -> None:

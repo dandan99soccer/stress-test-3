@@ -8,6 +8,7 @@ for a connected sheet, and the one line the shared record has to say back. Stand
 Where the rows go is ledger_store.ledger_target's answer: the laptop folder, a repository's ledger/ folder (one file per run
 under runs/, committed and pushed with the session's work), or nowhere in a cloud session outside any repository, in which
 case the `Logged:` line says so. A run logged again before any of its rows has resolved replaces its own outcome rows.
+Lines that start `Next:`, `Record:` or `Check:` follow the block and are for the pass to act on, not part of the block.
 """
 from __future__ import annotations
 
@@ -63,7 +64,8 @@ def log(s: dict, rows: List[dict], a) -> str:
         if kind == "repo" or a.split:
             _still_open(FL.read_csv(run_file(folder, run)), run)
             path = FL.write_run_file(rows, folder, run, a.project)
-            line = f"Logged: {len(rows)} rows → {os.path.relpath(path)} (run {run}); commit and push it with this session's work"
+            shown = "/".join([os.path.basename(os.path.abspath(folder)), "runs", os.path.basename(path)])
+            line = f"Logged: {len(rows)} rows → {shown}\nNext: commit and push {shown} with this session's work, or the rows end with the session"
         else:
             path = os.path.join(folder, "LEDGER.csv")
             if not os.path.exists(path):
@@ -85,7 +87,7 @@ def to_run_file(rows: List[dict], path: str) -> str:
     """Levels 4-6: put the set in the run's FORECASTS.csv, replacing an earlier copy of the same set."""
     keep = [r for r in FL.read_csv(path) if not (FL.in_outcome_set(r) and r.get("group") == rows[0]["group"])]
     FL.write_csv(path, keep + rows, FL.COLUMNS)
-    return f"Logged: {len(rows)} rows → {path}; forecast_ledger.py --check and --append carry them to the shared ledger"
+    return f"Logged: {len(rows)} rows → {path}\nNext: forecast_ledger.py --check, then --append, carry them to the shared ledger"
 
 
 def _glue(argv: Sequence[str]) -> List[str]:
@@ -102,12 +104,12 @@ def _glue(argv: Sequence[str]) -> List[str]:
 def main(argv: Optional[Sequence[str]] = None) -> int:
     ap = argparse.ArgumentParser(description=OC.__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     for flag in ("--decision", "--call", "--by", "--made", "--range", "--base", "--base-class", "--reason", "--why", "--high", "--low",
-                 "--source", "--cutoff", "--how", "--forecaster", "--rows", "--to", "--run", "--q", "--cuts", "--dist", "--all-of"):
+                 "--source", "--cutoff", "--how", "--forecaster", "--rows", "--to", "--run", "--q", "--cuts", "--dist", "--all-of", "--not-logged"):
         ap.add_argument(flag)
     ap.add_argument("--level", type=int, default=1); ap.add_argument("--project", default="")
     ap.add_argument("--outcome", action="append"); ap.add_argument("--option", action="append"); ap.add_argument("--sets", nargs="+")
     ap.add_argument("--other", type=float); ap.add_argument("--base-rate", type=float); ap.add_argument("--df", type=float, default=4.0)
-    for flag in ("--log", "--tsv", "--split", "--compact", "--fact", "--bins"):
+    for flag in ("--log", "--tsv", "--split", "--compact", "--fact", "--bins", "--exhaustive"):
         ap.add_argument(flag, action="store_true")
     a = ap.parse_args(_glue(sys.argv[1:] if argv is None else list(argv)))
     num = lambda s: [float(x) for x in s.split(",")]  # noqa: E731
@@ -148,9 +150,11 @@ def main(argv: Optional[Sequence[str]] = None) -> int:
             print("\n".join(f"error: {p}" for p in probs), file=sys.stderr)
             return 2
         logged = to_run_file(rows, a.rows) if a.rows else (log(s, rows, a) if a.log else "Logged: rows below, for the ledger sheet")
+    elif a.not_logged:  # a surface that keeps no files and has no ledger sheet: the line says so instead of being dropped
+        logged = f"Logged: no — {a.not_logged}"
     logged, _, record = logged.partition("\n")
     print(render(s, logged, a.compact))
-    for line in ([record] if record else []) + [f"Check: {c}" for c in chk]:  # not part of the block: relayed or answered by the pass
+    for line in ([record] if record else []) + [f"Check: {c}" for c in chk]:  # Next, Record, Check: for the pass, not part of the block
         print(line)
     if a.tsv:
         print("\n" + FL.sheet_rows(rows, a.run or f"{s['decision']}-{s['made']}-L{s['level']}", a.project), end="")
@@ -197,6 +201,7 @@ def _smoke() -> None:
         assert "\nLogged: 4 rows → " in out and "\nCheck: give the headline row its range" in out, out
         code, _, err = cli(argv + ["--outcome", "Works: x=97", "--outcome", "Fails: y=3", "--other", "0", "--log", "--to", os.path.join(d, "cli")])
         assert code == 2 and "at least 5% for what is not listed" in err and len(FL.read_ledger(os.path.join(d, "cli"))) == 4, "a refused set logs nothing"
+        assert "\nLogged: no — chat keeps no files" in cli(argv + [x for o in three for x in ("--outcome", o)] + ["--not-logged", "chat keeps no files"])[1]
         code, out, _ = cli(argv + [x for o in three for x in ("--outcome", o)] + ["--compact", "--tsv", "--range", "40-70"])
         assert code == 0 and out.startswith("**Outcomes** by 31 Mar 2027: works 55% (40–70) · partly 25%") and "\nrun\tproject\tid\t" in out
     print("outcomes_log smoke test: ok (logging with replace, split run files, the run's FORECASTS.csv, the record line, a resolved "

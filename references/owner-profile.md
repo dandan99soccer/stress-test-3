@@ -16,10 +16,12 @@ Everything below is Dan's, as recorded on the dates shown.
 - Plan: Team, Opus lead. The cost table in `references/budget.md` ("Estimating the cost") was measured on this plan on 2026-10-02 and is this profile's cost table until a newer measurement is written here with its date; the figures live there, not here, so the two cannot drift.
 - Standing instruction: included usage only in every session, pause setting **wait** when nobody is watching, resume after the reset (`.claude/rules/usage-limits.md`, 2026-10-26 and 2026-10-28). **Paid ok is never set by this file**: only Dan's own words in the conversation, for that run, can grant paid usage. Scheduled runs: at most four stress-test leads per window; at most two level 4 packets per Google Ads weekly.
 
+- Outcome percentages are logged at every level, on every run (Dan, 27 Nov 2026: "Always log", chosen knowing it adds one script call to each run, scheduled ones included). The call starts no agent, lookup or read, so what a run starts is unchanged (the 18 Nov rule).
+
 ## Where things live
 
 - Checkpoints, laptop: `~/.claude/sessions/stress-test-resume/`. Cloud session: `.stress-test/resume/` in the working repository, committed and pushed (`budget.md`, "The checkpoint").
-- Shared forecast ledger, laptop: `~/.claude/sessions/stress-test-forecasts/` (`LEDGER.csv`, `CALIBRATION.md`). Cloud session: the `ledger/` folder of the repository the run works in, committed and pushed. claude.ai chat: no sheet named yet — until one is, the rows go in the reply under **Ledger rows** (`forecast.md` section 9).
+- Shared forecast ledger, laptop: `~/.claude/sessions/stress-test-forecasts/` (`LEDGER.csv`, `CALIBRATION.md`). Cloud session: the `ledger/` folder of the repository the run works in, one file per run under `runs/`, committed and pushed. claude.ai chat: no sheet named yet — until one is, the rows go in the reply under **Ledger rows** (`forecast.md` section 9).
 - Workspace, laptop: `~/.claude/sessions/stress-test-3-workspace/` — `reports/` (the research reports the reference files cite: *Accurate research with Claude*, 18 Oct 2026; *Researching stocks options and tax*, 18 Oct 2026), `answer-keys/` (the laptop's eval set, eight decisions on 18 Oct 2026; the repository's `evals/` folder is the shared form of the same thing), `level-6-designs/`, and the Ads notes that seeded `packs/paid-search.md`.
 - Other records in the ledger's probability convention: the IBKR committee's `scores.csv` in `ibkr-investing`, mergeable into the shared ledger with `--append`.
 

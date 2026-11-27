@@ -1,6 +1,6 @@
 # Level 1 and the profiles every level uses
 
-Read this, with `reasoning.md`, for any pass above the stakes floor. Level 1 runs these steps at its own depth; levels 2–5 use the same profiles and numbered steps and do not run level 1 first.
+Read this, with `reasoning.md` and `outcomes.md`, for any pass above the stakes floor. Level 1 runs these steps at its own depth; levels 2–5 use the same profiles and numbered steps and do not run level 1 first.
 
 ## Pick a profile
 
@@ -53,7 +53,7 @@ Rules check for this profile: discount authority, the price list and quoting pro
 
 ## Level 1 (default, one turn, no subagents)
 
-Under roughly 600 words, at one of two depths. Moderate stakes — reversible within a week, under a day of work, no one else's approval needed — run steps 1, 2, 7 and 8 only, about 150 words. Everything else runs all nine.
+Under roughly 600 words, the Outcomes block not counted, at one of two depths. Moderate stakes — reversible within a week, under a day of work, no one else's approval needed — run steps 1, 2, 7 and 8 only, about 150 words. Everything else runs all nine.
 
 **1. Restate the real decision.** One sentence, built on the premise as checked in Step 0, not as remembered. If the stated question is not the actual one, say so — this is often where the value is. Name any constraint the person stated — budget, deadline, risk appetite — or the assumption you are making in its absence.
 
@@ -77,9 +77,10 @@ A recommendation that breaks a rule is not a queued action. Say which rule it br
 
 Name the decision owner when it is not the user: then the output is a proposal to that person, the first step is that conversation, and the recommendation still says what you would have the owner do. An owner line is not a license to punt.
 
-**8. Two lines that always appear.**
+**8. Two lines and the odds, always.**
 - **Success looks like:** an observable condition, with a number and a date where possible. A date that depends on someone else acting is a wish — write it as the trigger ("after the product owner answers the licensing question") or name the date that person committed to. Say who checks it and on what date. If you cannot state a condition at all, say so — that is itself a finding.
 - **Abandon this if:** the condition under which stopping is correct.
+- **Outcomes:** the block of `outcomes.md`, printed directly under the call. Works is the success line, Fails the abandon line, Partly what lies between, Not listed the rest; each row carries its percentage, the rows add to 100, and every other option on the table gets one number on the same test. Make the numbers before the call is worded, the failing side first and from a base rate where one is known. Then run `scripts/outcomes.py … --log` once: it checks, prints and logs the block (`--compact` on the short form). A `Check:` line it prints is answered or fixed, never pasted.
 
 **9. Trade-offs.** What the chosen path gives up, including what the runner-up would have given you.
 
@@ -88,6 +89,8 @@ Name the decision owner when it is not the user: then the output is a proposal t
 **Sound but not allowed** is the worse failure, because it is the part that gets acted on. Step 6 exists for it; do not let it be the step that gets skipped.
 
 **One option in disguise.** Three plans that differ only in scope or timing are one plan. If every option shares the same premise, the premise is what needs testing — go back to step 3.
+
+**Odds written after the call.** Numbers made once the recommendation is worded will agree with it. Make them first; when another option's odds match or beat the call's, say what the call wins on, or change the call.
 
 **Build cost is not operating cost.** Something cheap to build and expensive to run every day is the worse outcome, and the harder one to see, because the bill arrives later.
 

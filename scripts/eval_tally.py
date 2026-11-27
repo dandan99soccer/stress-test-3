@@ -6,7 +6,8 @@ comparison between adjacent levels on the decisions run at both. Standard librar
     python3 eval_tally.py evals/results.csv --compare 1 4   # one specific pair of levels
 
 Columns of results.csv: slug, level, run_date, model, skill_commit, call_matched, kill_criterion_right,
-weakest_link_named, first_step_right, points, words, notes. Measures are 1, 0, 0.5 or na; a row whose
+weakest_link_named, first_step_right, p_realized, points, words, notes. Measures are 1, 0, 0.5 or na;
+p_realized is the share (0 to 1) the pass's Outcomes block gave the row that happened, or na. A row whose
 notes say "void" is skipped. Rows are never edited; a correction is a new row that names the old one.
 """
 from __future__ import annotations
@@ -55,7 +56,7 @@ def latest_per_decision(rows: List[Dict[str, str]]) -> Dict[Tuple[str, str], Dic
 
 def per_level(latest: Dict[Tuple[str, str], Dict[str, str]]) -> List[str]:
     levels = sorted({lvl for _, lvl in latest}, key=lambda x: (len(x), x))
-    lines = ["| level | n | " + " | ".join(MEASURES) + " | mean points |", "|---|---|" + "---|" * len(MEASURES) + "---|"]
+    lines = ["| level | n | " + " | ".join(MEASURES) + " | mean p on what happened | mean points |", "|---|---|" + "---|" * len(MEASURES) + "---|---|"]
     for lvl in levels:
         rows = [r for (s, l), r in latest.items() if l == lvl]
         cells = []
@@ -68,7 +69,9 @@ def per_level(latest: Dict[Tuple[str, str], Dict[str, str]]) -> List[str]:
             cells.append(f"{sum(vals) / len(vals):.2f} [{lo:.2f}, {hi:.2f}] n={len(vals)}")
         pts = [v for v in (value(r.get("points", "")) for r in rows) if v is not None]
         mean_pts = f"{sum(pts) / len(pts):.1f}" if pts else "n/a"
-        lines.append(f"| {lvl} | {len(rows)} | " + " | ".join(cells) + f" | {mean_pts} |")
+        prs = [v for v in (value(r.get("p_realized", "")) for r in rows) if v is not None]  # the Outcomes block's share on what happened
+        mean_pr = f"{sum(prs) / len(prs):.2f} n={len(prs)}" if prs else "n/a"
+        lines.append(f"| {lvl} | {len(rows)} | " + " | ".join(cells) + f" | {mean_pr} | {mean_pts} |")
     return lines
 
 
@@ -121,14 +124,14 @@ def _smoke() -> None:
     assert 0.25 < lo < 0.5 < hi < 0.75, (lo, hi)
     assert wilson(0, 0) == (0.0, 1.0)
     rows = [
-        "slug,level,run_date,model,skill_commit,call_matched,kill_criterion_right,weakest_link_named,first_step_right,points,words,notes",
-        "a,1,2026-11-01,opus,abc,1,na,1,1,0.5,400,",
-        "a,2,2026-11-01,opus,abc,1,1,1,1,2,900,",
-        "b,1,2026-11-01,opus,abc,0,0,0,1,0.4,380,",
-        "b,2,2026-11-01,opus,abc,1,1,1,1,2.5,950,",
-        "b,2,2026-10-01,opus,old,0,0,0,0,2.5,950,superseded by the later run",
-        "c,1,2026-11-01,opus,abc,0.5,na,1,0,0.6,420,",
-        "c,2,2026-11-01,opus,abc,0,0,0,0,2,880,void: key leaked",
+        "slug,level,run_date,model,skill_commit,call_matched,kill_criterion_right,weakest_link_named,first_step_right,p_realized,points,words,notes",
+        "a,1,2026-11-01,opus,abc,1,na,1,1,0.55,0.5,400,",
+        "a,2,2026-11-01,opus,abc,1,1,1,1,0.65,2,900,",
+        "b,1,2026-11-01,opus,abc,0,0,0,1,0.15,0.4,380,",
+        "b,2,2026-11-01,opus,abc,1,1,1,1,na,2.5,950,",
+        "b,2,2026-10-01,opus,old,0,0,0,0,0.05,2.5,950,superseded by the later run",
+        "c,1,2026-11-01,opus,abc,0.5,na,1,0,0.20,0.6,420,",
+        "c,2,2026-11-01,opus,abc,0,0,0,0,0.30,2,880,void: key leaked",
     ]
     with tempfile.TemporaryDirectory() as d:
         p = os.path.join(d, "results.csv")
@@ -138,8 +141,14 @@ def _smoke() -> None:
         assert "Decisions: 3" in out and "rows counted: 5" in out, out
         assert "level 2 wins 1, loses 0, ties 1" in out, out
         assert "| 1 | 3 |" in out and "n=3" in out
+        assert "| 0.30 n=3 | 0.5 |" in out and "| 0.65 n=1 | 2.2 |" in out, out   # mean p_realized per level; na and void rows left out
+        old = os.path.join(d, "old.csv")
+        with open(old, "w", encoding="utf-8", newline="\n") as fh:
+            fh.write("slug,level,run_date,model,skill_commit,call_matched,kill_criterion_right,weakest_link_named,first_step_right,points,words,notes\n"
+                     "a,1,2026-11-01,opus,abc,1,na,1,1,0.5,400,\n")
+        assert "| n/a | 0.5 |" in tally(old), "a results file from before the column still tallies"
         assert tally(p, ("1", "2")).count("levels 1 vs 2") == 1
-    print("eval_tally smoke test: ok (Wilson, latest-run dedupe, void rows skipped, per-level table, paired comparison)")
+    print("eval_tally smoke test: ok (Wilson, latest-run dedupe, void rows skipped, per-level table, mean p on what happened, paired comparison)")
 
 
 def main(argv: Optional[Sequence[str]] = None) -> int:
