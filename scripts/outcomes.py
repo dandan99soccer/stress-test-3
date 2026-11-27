@@ -3,12 +3,12 @@ call, checked and rounded to 100 here, logged to the forecast ledger by outcomes
 and which this file hands off to. Standard library only; the t fit is student_t.py in this folder.
 
     python3 outcomes.py                                   # smoke test
-    python3 outcomes.py --decision <slug> --level 1 --call "Pilot first" --by 2027-03-31 \
-        --outcome "Works: 20+ qualified leads a month=55" --outcome "Partly: leads up, under 20=25" \
-        --outcome "Fails: no lift, kill line hit=15" --range 40-70 --base 3/6 --base-class "in-house launches 2024-26" \
-        --option "Full launch now=40" --option "Do nothing=10" --high "<why 55 may be too high>" --low "<why too low>" \
-        --source "CRM lead report, read by the owner" --log
-    ... --sets "55,25,15,5" "45,30,20,5" "60,25,10,5"     # several blind sets in place of numbers on the rows: the median
+    python3 outcomes.py --decision <slug> --level <N> --call "<the call, in a few words>" --by <YYYY-MM-DD> \
+        --outcome "Works: <success line>=<n>" --outcome "Partly: <between>=<n>" --outcome "Fails: <abandon line>=<n>" \
+        --range <low>-<high> --base <k>/<n> --base-class "<named class>" --option "<other option>=<n>" --option "Do nothing=<n>" \
+        --high "<why it may be too high>" --low "<why too low>" --source "<where it is read>" --log
+    (no sample numbers here on purpose: a sample number becomes the pass's anchor)
+    ... --sets "<set 1>" "<set 2>" "<set 3>"               # several blind sets in place of numbers on the rows: the median
                                                            # set, with the spread across the sets as each row's range
     ... --rows FORECASTS.csv                               # levels 4-6: put the rows in the run's file instead of --log
     ... --tsv                                              # print the ledger rows tab-separated, for a connected sheet
@@ -145,7 +145,7 @@ def build(a) -> Tuple[Optional[dict], List[str], List[str]]:
     else:
         vals = [n[2] for n in named]
         if any(v is None for v in vals):
-            errs.append("every --outcome needs its number: 'Label: text=55' (or pass --sets)")
+            errs.append("every --outcome needs its number: 'Label: text=<number>' (or pass --sets)")
             vals = [v or 0.0 for v in vals]
         other = 0.0 if a.exhaustive else (a.other if a.other is not None else 100.0 - sum(vals))
         if abs(sum(vals) + other - 100) > 0.5 or other < 0:
@@ -198,7 +198,7 @@ def build(a) -> Tuple[Optional[dict], List[str], List[str]]:
     opts = [parse_row(o) for o in a.option or []]
     opts = [(l if not t else f"{l}: {t}", p) for l, t, p in opts]
     if any(p is None for _, p in opts):
-        errs.append("every --option needs its number: 'Name=40'")
+        errs.append("every --option needs its number: 'Name=<number>'")
     better = [n for n, p in opts if p is not None and p >= head]
     if better and not a.why:
         chk.append(f"{', '.join(better)} has odds at least as good as the call's on this test: say what the call wins on (--why) or revisit the call")
@@ -209,7 +209,7 @@ def build(a) -> Tuple[Optional[dict], List[str], List[str]]:
     how = a.how or (f"median of {len(a.sets)} blind sets" if a.sets else "lead's judgment" + (", from the base rate" if base else ""))
     s = dict(rows=rows, head=head, rng=rng, base=base, opts=opts, made=made, by=a.by, call=a.call or "", level=int(a.level), how=how,
              decision=a.decision or "", source=a.source or "the owner, at the check date", fact=a.fact, base_class=a.base_class or "",
-             reason=a.reason or "", why=a.why or "", high=a.high or "", low=a.low or "", cutoff=a.cutoff or "",
+             reason=a.reason or "", why=(a.why or "") if better else "", high=a.high or "", low=a.low or "", cutoff=a.cutoff or "",
              forecaster=a.forecaster or ("aggregate" if a.sets else "lead"))
     return s, errs, chk
 
@@ -233,7 +233,7 @@ def basis_text(s: dict) -> str:
 def render(s: dict, logged: str = "", compact: bool = False) -> str:
     """The fixed block, pasted into the reply as printed."""
     rng = f" ({s['rng'][0]:.0f}–{s['rng'][1]:.0f})" if s["rng"] else ""
-    opts = " · ".join(f"{n} {p:g}%" for n, p in s["opts"]) + (f" (the call wins on {s['why']})" if s["why"] and s["opts"] else "")
+    opts = " · ".join(f"{n} {p:g}%" for n, p in s["opts"]) + (f" (the call wins on: {s['why']})" if s["why"] and s["opts"] else "")
     if compact:
         bits = [" · ".join(f"{r['label'].lower()} {r['pct']}%{rng if i == 0 else ''}" for i, r in enumerate(s["rows"]))]
         bits += [f"others on the same test: {opts}"] if opts else []
@@ -319,6 +319,9 @@ def _smoke() -> None:
     assert any("adds to 100" in e for e in build(ns(outcome=["Works: a", "Fails: b"], sets=["55,x,5"]))[1]) and any("--call" in e for e in build(ns(outcome=three, call=None))[1])
     assert [r["pct"] for r in build(ns(outcome=["Works: a=52.5", "Partly: b=27.5", "Fails: c=14.5"], other=5.5))[0]["rows"]] == [53, 28, 14, 5], "decimals are rounded so the rows still add to exactly 100"
     assert any("--high" in e for e in build(ns(outcome=three, log=True))[1]) and any("--high" in c for c in build(ns(outcome=three))[2])
+    # --why is printed only when another option's odds match or beat the call's
+    assert "wins on" not in render(build(ns(outcome=three, option=["Other=40"], why="cost", range="40-70", high="h", low="l"))[0])
+    assert "Other 60% (the call wins on: cost)" in render(build(ns(outcome=three, option=["Other=60"], why="cost", range="40-70", high="h", low="l"))[0])
     # rows cut from one measured number (level 6): nothing is left unlisted, and they still add to 100
     s3, e3, _ = build(ns(outcome=["Bear: below -15%=19", "Base: -15% to +10%=48", "Bull: above +10%=33"], exhaustive=True, range="14-24", high="h", low="l"))
     assert e3 == [] and [r["id"] for r in s3["rows"]] == ["O1", "O2", "O3"] and "Not listed" not in render(s3) and FL.check_run(ledger_rows(s3)) == []

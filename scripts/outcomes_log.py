@@ -154,7 +154,10 @@ def main(argv: Optional[Sequence[str]] = None) -> int:
         logged = f"Logged: no — {a.not_logged}"
     logged, _, record = logged.partition("\n")
     print(render(s, logged, a.compact))
-    for line in ([record] if record else []) + [f"Check: {c}" for c in chk]:  # Next, Record, Check: for the pass, not part of the block
+    extra = ([record] if record else []) + [f"Check: {c}" for c in chk]  # Next, Record, Check: for the pass, not part of the block
+    if extra:
+        print("\n[for the pass, not for the reply]")
+    for line in extra:
         print(line)
     if a.tsv:
         print("\n" + FL.sheet_rows(rows, a.run or f"{s['decision']}-{s['made']}-L{s['level']}", a.project), end="")
