@@ -11,50 +11,28 @@ Standard library only; the math is imported from forecast_tools.py in the same f
     python3 forecast_ledger.py --sheet-rows FORECASTS.csv --run <id>   # ledger rows as TSV, for a connected spreadsheet
 
 The shared folder, when --to / --calibrate / --init give none, is the first of: $STRESS_TEST_LEDGER;
-./ledger when it exists (a project repository's committed folder, which outlives a cloud session);
-~/.claude/sessions/stress-test-forecasts (the laptop). Columns and rules: references/forecast.md
-sections 2, 6, 8 and 9.
+a ledger/ folder in the working folder or at the top of its repository (a committed folder, which outlives
+a cloud session; in a cloud session it is used even before it exists); ~/.claude/sessions/stress-test-forecasts
+(the laptop). In a repository's ledger/ each run is its own file under runs/, so two sessions on two branches
+never edit the same file; --calibrate reads LEDGER.csv and every file under runs/. The columns, the folder
+order and the file reading are in ledger_store.py. Rules: references/forecast.md sections 2, 6, 8 and 9; the
+outcome sets every level logs: references/outcomes.md.
 """
 from __future__ import annotations
 
 import argparse
-import csv
 import os
+import re
 import statistics
 from datetime import date
 from typing import Dict, List, Optional, Sequence, Tuple
 
 from forecast_tools import QLEVELS, brier, calibration_table, check_partition, check_quantiles, cluster_bootstrap, quantile_score
+from ledger_store import (COLUMNS, EPHEMERAL_NOTE, LAPTOP_LEDGER_DIR, LEDGER_COLUMNS, OUTCOME_GROUP, in_outcome_set, is_headline,  # noqa: F401
+                          ledger_target, num as _f, outcome_sets, read_csv, read_ledger, resolve_ledger_dir, write_csv, write_run_file)
 
-COLUMNS = ["id", "decision", "made", "kind", "question", "criterion", "source", "resolve_date", "p",
-           "q05", "q25", "q50", "q75", "q95", "range_low", "range_high", "forecaster", "method",
-           "base_rate", "base_class", "base_n", "group", "node", "cluster", "ref_value", "model_cutoff", "status", "outcome",
-           "score", "score_kind", "resolved_on", "notes"]
-LEDGER_COLUMNS = ["run", "project"] + COLUMNS
 QCOLS = ("q05", "q25", "q50", "q75", "q95")
 REQUIRED = ["id", "decision", "made", "kind", "question", "criterion", "source", "resolve_date", "forecaster", "method"]
-
-
-def read_csv(path: str) -> List[dict]:
-    if not os.path.exists(path):
-        return []
-    with open(path, newline="", encoding="utf-8") as fh:
-        return list(csv.DictReader(fh))
-
-
-def write_csv(path: str, rows: Sequence[dict], columns: Sequence[str]) -> None:
-    with open(path, "w", newline="", encoding="utf-8") as fh:
-        w = csv.DictWriter(fh, fieldnames=list(columns), extrasaction="ignore")
-        w.writeheader()
-        for r in rows:
-            w.writerow({c: r.get(c, "") for c in columns})
-
-
-def _f(x) -> Optional[float]:
-    try:
-        return float(x) if x not in ("", None) else None
-    except ValueError:
-        return None
 
 
 def check_run(rows: Sequence[dict]) -> List[str]:
@@ -94,6 +72,10 @@ def check_run(rows: Sequence[dict]) -> List[str]:
     for g, ps in groups.items():
         if len(ps) > 1 and not check_partition(ps):
             problems.append(f"group {g}: probabilities sum to {sum(ps):.3f}, not 1")
+        if g.endswith(OUTCOME_GROUP):  # an outcome set (references/outcomes.md): once resolved, exactly one row happened
+            ys = [_f(r.get("outcome")) for r in rows if r.get("group") == g and r.get("status") == "resolved"]
+            if len(ys) == len(ps) and None not in ys and abs(sum(ys) - 1.0) > 1e-9:
+                problems.append(f"group {g}: {sum(ys):g} rows marked as happened; exactly one row of an outcome set happens")
     return problems
 
 
@@ -131,8 +113,29 @@ def append_run(run_rows: Sequence[dict], ledger_path: str, run_id: str, project:
     return added
 
 
+def level_of(r: dict) -> str:
+    m = re.match(r"\s*level\s*(\d)", r.get("method") or "", re.I)
+    return m.group(1) if m else "untagged"
+
+
+def outcome_set_report(ledger: Sequence[dict]) -> str:
+    sets = outcome_sets(ledger)
+    if not sets:
+        return ""
+    lines = ["", "## Outcome sets (references/outcomes.md)", "",
+             f"- Sets resolved: {len(sets)}; what happened had been given {statistics.fmean(s['p_realized'] for s in sets):.0%} on average",
+             f"- Mean multi-category Brier: {statistics.fmean(s['brier'] for s in sets):.3f} "
+             f"(an even split over the same rows scores {statistics.fmean(s['even'] for s in sets):.3f}; lower is better)"]
+    others = [s["other"] for s in sets if s["other"]]
+    if others:
+        lines.append(f"- Not listed: given {statistics.fmean(p for p, _ in others):.0%} on average, happened in "
+                     f"{statistics.fmean(y for _, y in others):.0%} of {len(others)} sets")
+    return "\n".join(lines) + "\n"
+
+
 def calibration_report(ledger: Sequence[dict], min_skill_n: int = 15, min_bin_n: int = 8) -> str:
-    res = [r for r in ledger if r.get("status") == "resolved" and r.get("kind") in ("event", "ranking")
+    # an outcome set enters the pooled figures through its headline row only (is_headline); the set is scored whole at the end
+    res = [r for r in ledger if r.get("status") == "resolved" and r.get("kind") in ("event", "ranking") and is_headline(r)
            and _f(r.get("p")) is not None and _f(r.get("outcome")) is not None]
     lines = [f"# Calibration record — regenerated {date.today().isoformat()}", ""]
     today = date.today().isoformat()
@@ -181,24 +184,15 @@ def calibration_report(ledger: Sequence[dict], min_skill_n: int = 15, min_bin_n:
         by_kind.setdefault(r.get("kind") or "?", []).append(b)
     lines += ["", "## By kind of question", "", "| kind | n | mean Brier |", "|---|---|---|"]
     lines += [f"| {k} | {len(bs)} | {statistics.fmean(bs):.3f} |" for k, bs in sorted(by_kind.items())]
-    return "\n".join(lines) + "\n"
-
-
-LAPTOP_LEDGER_DIR = os.path.join("~", ".claude", "sessions", "stress-test-forecasts")
-
-
-def resolve_ledger_dir(explicit: Optional[str] = None, env: Optional[Dict[str, str]] = None, cwd: Optional[str] = None) -> str:
-    """The shared ledger folder: the explicit path; else $STRESS_TEST_LEDGER; else ./ledger when it exists
-    (a repository's committed folder, which outlives a cloud session); else the laptop folder."""
-    if explicit:
-        return os.path.expanduser(explicit)
-    env = os.environ if env is None else env
-    if env.get("STRESS_TEST_LEDGER"):
-        return os.path.expanduser(env["STRESS_TEST_LEDGER"])
-    repo_ledger = os.path.join(cwd or os.getcwd(), "ledger")
-    if os.path.isdir(repo_ledger):
-        return os.path.abspath(repo_ledger)
-    return os.path.expanduser(LAPTOP_LEDGER_DIR)
+    by_lvl: Dict[str, List[Tuple[float, int]]] = {}
+    for r, pr in zip(res, pairs):
+        by_lvl.setdefault(level_of(r), []).append(pr)
+    if set(by_lvl) - {"untagged"}:  # rows whose method starts "level N": the outcome sets every level logs
+        lines += ["", "## By level", "", "| level | n | mean Brier | yes-lean |", "|---|---|---|---|"]
+        for lv, prs in sorted(by_lvl.items()):
+            lines.append(f"| {lv} | {len(prs)} | {statistics.fmean(brier(p, o) for p, o in prs):.3f} | "
+                         f"{statistics.fmean(p for p, _ in prs) - statistics.fmean(o for _, o in prs):+.3f} |")
+    return "\n".join(lines) + "\n" + outcome_set_report(ledger)
 
 
 def sheet_rows(rows: List[Dict[str, str]], run: str, project: str) -> str:
@@ -242,15 +236,30 @@ def _smoke() -> None:
         assert "1 open row(s) past their resolve date" in calibration_report(stale) and "S1 (demo, due 2000-01-01)" in calibration_report(stale)
         init_folder(os.path.join(d, "shared"))
         assert os.path.exists(os.path.join(d, "shared", "CALIBRATION.md"))
-        # the shared folder resolves in order: explicit, environment, ./ledger in the working folder, the laptop folder
+        # the shared folder still resolves through this module (the order and the kinds are tested in ledger_store.py)
         assert resolve_ledger_dir("/x/y", env={"STRESS_TEST_LEDGER": "/z"}, cwd=d) == "/x/y"
-        assert resolve_ledger_dir(None, env={"STRESS_TEST_LEDGER": "/z"}, cwd=d) == "/z"
         assert resolve_ledger_dir(None, env={}, cwd=d) == os.path.expanduser(LAPTOP_LEDGER_DIR)
-        os.makedirs(os.path.join(d, "ledger"))
-        assert resolve_ledger_dir(None, env={}, cwd=d) == os.path.abspath(os.path.join(d, "ledger"))
         tsv = sheet_rows(rows, "run-1", "demo").splitlines()
         assert tsv[0].split("\t") == LEDGER_COLUMNS and len(tsv) == 4 and tsv[1].startswith("run-1\tdemo\tF1\t")
-    print("forecast_ledger smoke test: ok (run check, scoring, append with dedupe, calibration report, init, ledger folder, sheet rows)")
+        # an outcome set (references/outcomes.md): one run file, exactly one row happens, the headline row alone is pooled
+        oset = [dict(base, id=i, kind="event", question=q, p=p, range_low=lo, range_high=hi, group="demo3:outcomes", decision="demo3",
+                     method="level 1: lead's judgment")
+                for i, q, p, lo, hi in (("O1", "Works", "0.55", "0.4", "0.7"), ("O2", "Partly", "0.25", "0.15", "0.35"),
+                                        ("O3", "Fails", "0.15", "0.05", "0.25"), ("OX", "Not listed", "0.05", "0.05", "0.15"))]
+        assert check_run(oset) == [], check_run(oset)
+        rl = os.path.join(d, "repo-ledger")
+        write_run_file(oset, rl, "demo3-L1", "demo")
+        for r, o in zip(oset, ("0", "1", "0", "0")):
+            r["status"], r["outcome"] = "resolved", o
+        assert check_run(oset) == [] and any("exactly one row" in m for m in check_run([dict(r, outcome="1") for r in oset]))
+        score_rows(oset, today="2026-11-18"); append_run(oset, os.path.join(rl, "LEDGER.csv"), "demo3-L1", "demo")
+        merged = read_ledger(rl)
+        assert len(merged) == 4 and all(r["status"] == "resolved" for r in merged), "the resolved copy wins over the open run file"
+        rep2 = calibration_report(merged + read_csv(led))
+        assert "Resolved event forecasts: 5" in rep2, "a set adds its headline row only to the pooled figures"
+        assert "## By level" in rep2 and "| 1 | 1 |" in rep2 and "Sets resolved: 1" in rep2 and "Not listed: given 5%" in rep2
+    print("forecast_ledger smoke test: ok (run check, scoring, append with dedupe, calibration report, init, sheet rows, "
+          "outcome sets checked and scored whole, by-level table, run files merged)")
 
 
 def main(argv: Optional[Sequence[str]] = None) -> int:
@@ -261,11 +270,18 @@ def main(argv: Optional[Sequence[str]] = None) -> int:
     ap.add_argument("--init", nargs="?", const="", metavar="DIR")
     ap.add_argument("--calibrate", nargs="?", const="", metavar="LEDGER.csv")
     ap.add_argument("--where", action="store_true", help="print the shared ledger folder this run would use")
+    ap.add_argument("--split", action="store_true", help="with --append: write the run as its own file under runs/ "
+                    "(the default in a repository's ledger/ folder)")
     ap.add_argument("--run")
     ap.add_argument("--project", default="")
     a = ap.parse_args(argv)
     if a.where:
-        print(resolve_ledger_dir())
+        folder, kind = ledger_target()
+        print(folder)
+        if kind == "repo":
+            print("(a repository folder: each run is written as its own file under runs/; commit and push it with the run)")
+        elif kind == "ephemeral":
+            print(f"({EPHEMERAL_NOTE})")
     elif a.init is not None:
         folder = resolve_ledger_dir(a.init or None)
         init_folder(folder)
@@ -277,22 +293,30 @@ def main(argv: Optional[Sequence[str]] = None) -> int:
     elif a.score:
         rows = read_csv(a.score)
         n = score_rows(rows)
-        write_csv(a.score, rows, COLUMNS)
+        # keep the file's own columns: a run's FORECASTS.csv, or a ledger file (LEDGER.csv, runs/<run>.csv) with run and project
+        write_csv(a.score, rows, LEDGER_COLUMNS if rows and "run" in rows[0] else COLUMNS)
         print(f"scored {n} rows")
     elif a.append:
         if not a.run:
             ap.error("--append needs --run")
-        to = a.to or os.path.join(resolve_ledger_dir(), "LEDGER.csv")
-        if not os.path.exists(to):
-            init_folder(os.path.dirname(to) or ".")
-        print(f"appended {append_run(read_csv(a.append), to, a.run, a.project)} rows to {to}")
+        folder, kind = (os.path.dirname(a.to) or ".", "explicit") if a.to else ledger_target()
+        rows = read_csv(a.append)
+        if a.split or kind == "repo":
+            print(f"wrote {len(rows)} rows to {write_run_file(rows, folder, a.run, a.project)} (one file per run; commit and push it with the run)")
+        else:
+            to = a.to or os.path.join(folder, "LEDGER.csv")
+            if not os.path.exists(to):
+                init_folder(os.path.dirname(to) or ".")
+            print(f"appended {append_run(rows, to, a.run, a.project)} rows to {to}")
+        if kind == "ephemeral":
+            print(f"warning: {EPHEMERAL_NOTE}")
     elif a.sheet_rows:
         if not a.run:
             ap.error("--sheet-rows needs --run")
         print(sheet_rows(read_csv(a.sheet_rows), a.run, a.project), end="")
     elif a.calibrate is not None:
         ledger = a.calibrate or os.path.join(resolve_ledger_dir(), "LEDGER.csv")
-        rep = calibration_report(read_csv(ledger))
+        rep = calibration_report(read_ledger(ledger))  # LEDGER.csv and every run file under runs/ beside it
         if a.out:
             with open(a.out, "w", encoding="utf-8") as fh:
                 fh.write(rep)
