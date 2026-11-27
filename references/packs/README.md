@@ -15,7 +15,7 @@ A pack **seeds; it does not run**. It names the quantities the level computes an
 5. **Market and crowd benchmarks.** What exists for the domain, the known bias of each (a risk-neutral density is not a forecast; a longshot price is an upper bound; a consensus walks down through the year), and the **transform** the pack applies before a benchmark becomes the reference forecaster.
 6. **The prior model.** The structure every forecast is built on (for equities, the driver tree); the two numbers the call turns on, named on the Mode line; what completeness is measured against.
 7. **Sizing and the objective.** The quantity the call maximizes or protects (for equities, after-tax NAV at the horizon, paired against hold) and how size is set (a loss budget; the formula; what is a sensitivity line only).
-8. **The brief.** What page one holds, in how many words, before any process line; the exits.
+8. **The brief.** What page one holds, in how many words, before any process line; the exits; the thresholds the Outcomes block's rows are cut at (`outcomes.md` section 5).
 9. **Domain hard rules.** What the pass may never do in this domain, on top of SKILL.md's rules.
 10. **The reading order.** For a single object, the fixed order in which the evidence is read, each step a retrieval agent returning verbatim passages.
 11. **The evidence-type checklist.** The completeness list for the evidence map: each type with its **clock** (how stale it is when read) and its **role** (trigger, explanatory, direction only, never a trigger). A type with no clock is not on the list.

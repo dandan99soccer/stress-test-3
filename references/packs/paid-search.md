@@ -42,7 +42,7 @@ The call protects **incremental conversions (or value) net of cost at the horizo
 
 ## 8. The brief
 
-Page one, 350 words or fewer: the plan's row, the thesis in one line, the account reference, the change with its size and start date, bear/base/bull on the primary row at 4 and 13 weeks, wrong-if, and the four exits — the kill level with its two-week rule, the learning-end date before which nothing is judged, the read date on which the rows resolve, and the reversal step. Then the Thesis card and the fixed lines in the order `level-6.md` gives.
+Page one, 350 words or fewer: the plan's row, the thesis in one line, the account reference, the change with its size and start date, bear/base/bull on the primary row at 4 and 13 weeks, each with its percentage (the account reference cut at the kill level and the success line: `outcomes.md` section 5), wrong-if, and the four exits — the kill level with its two-week rule, the learning-end date before which nothing is judged, the read date on which the rows resolve, and the reversal step. Then the Thesis card and the fixed lines in the order `level-6.md` gives.
 
 ## 9. Domain hard rules
 
