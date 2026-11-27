@@ -114,7 +114,7 @@ def main(argv: Optional[Sequence[str]] = None) -> int:
     if a.all_of:
         ind, linked = all_of(num(a.all_of))
         print(f"All of {a.all_of}: {ind:.0%} if the parts are independent, {linked:.0%} if one cause decides them all. Use the pair as the "
-              "range and place the number by how much the parts share a cause; never the smallest part alone.")
+              "range and place the number by how much the parts share a cause.")
         return 0
     if a.bins:
         if not a.cuts or not (a.q or a.dist):

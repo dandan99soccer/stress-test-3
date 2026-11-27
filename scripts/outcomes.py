@@ -18,7 +18,7 @@ and which this file hands off to. Standard library only; the t fit is student_t.
 
 The first --outcome is the headline row (for a recommendation, the success line); the rest of 100 goes to "Not listed"
 unless --other gives it. Refused, with nothing logged: rows that do not add to 100, a row under 5% or over 95% with no
---base-class behind it, a range that does not hold its number, a missing date. Printed as `Check:` lines for the pass to
+--base-class behind it, less than 5% left for Not listed, a range that does not hold its number, a missing date. Printed as `Check:` lines for the pass to
 answer or fix: a near-even split, a headline number outside its base rate's interval with no --reason, another option
 with odds at least as good as the call's and no --why, a missing range or missing too-high and too-low reasons.
 """
@@ -145,9 +145,10 @@ def build(a) -> Tuple[Optional[dict], List[str], List[str]]:
     rows = [dict(id=f"O{i + 1}", label=n[0], text=n[1], pct=p, spread=sp) for i, (n, p, sp) in enumerate(zip(named, pcts, spread))]
     rows.append(dict(id="OX", label="Not listed", text=OTHER_TEXT, pct=pcts[-1], spread=spread[-1]))
     for r in rows:
-        if not (FLOOR <= r["pct"] <= CEIL) and not a.base_class:
-            errs.append(f"{r['label']} at {r['pct']}%: nothing under {FLOOR}% or over {CEIL}% without a named class behind it (--base-class)"
-                        + ("; leave at least 5% for what is not listed" if r["id"] == "OX" else ""))
+        if r["id"] == "OX" and r["pct"] < FLOOR:
+            errs.append(f"Not listed at {r['pct']}%: leave at least {FLOOR}% for what is not listed, whatever backs the other rows")
+        elif not (FLOOR <= r["pct"] <= CEIL) and not a.base_class:
+            errs.append(f"{r['label']} at {r['pct']}%: nothing under {FLOOR}% or over {CEIL}% without a named class behind it (--base-class)")
     head = rows[0]["pct"] if rows else 0
     base = None
     if a.base:
@@ -298,7 +299,8 @@ def _smoke() -> None:
     # refusals: a sum off 100, an extreme row with no class, no room for what is not listed, numbers given twice
     assert any("not 100" in e for e in build(ns(outcome=three, other=10.0))[1])
     assert any("without a named class" in e for e in build(ns(outcome=["Works: x=97", "Fails: y=3"], other=0.0))[1])
-    assert any("at least 5%" in e for e in build(ns(outcome=["Works: x=60", "Fails: y=38"]))[1])
+    assert any("at least 5%" in e for e in build(ns(outcome=["Works: x=60", "Fails: y=38"], base_class="a named class"))[1])
+    assert build(ns(outcome=["Works: x=92", "Fails: y=3"], base_class="a named class", range="85-97", high="h", low="l"))[1] == []
     assert any("not both" in e for e in build(ns(outcome=three, sets=["55,25,15,5"]))[1])
     assert any("--high" in e for e in build(ns(outcome=three, log=True))[1]) and any("--high" in c for c in build(ns(outcome=three))[2])
     # checks: an even split, a number outside its base rate's interval, a better alternative, a missing range
